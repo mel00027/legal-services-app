@@ -2,7 +2,7 @@ const { Client } = require('ssh2');
 
 const conn = new Client();
 conn.on('ready', () => {
-  conn.exec('cd /opt/legalclick && pm2 start ecosystem.config.js && pm2 list && pm2 logs legalclick-bot --lines 20 --no-daemon', (err, stream) => {
+  conn.exec('cd /opt/legalclick && pm2 start ecosystem.config.cjs && pm2 list && pm2 logs legalclick-bot --lines 20 --no-daemon', (err, stream) => {
     if (err) throw err;
     stream.on('close', (code) => {
       console.log('Stream closed with code ' + code);
