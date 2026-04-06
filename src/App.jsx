@@ -546,16 +546,16 @@ const ResponsiveApp = () => {
       </main>
 
       {/* ========== MOBILE BOTTOM TAB BAR ========== */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 px-6 pt-2.5 pb-0 flex justify-around items-center z-50 safe-bottom">
-        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex flex-col items-center gap-1 text-electric py-1.5 min-w-[64px] cursor-pointer">
+      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 px-6 pt-1 pb-0 flex justify-around items-center z-50 safe-bottom">
+        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex flex-col items-center gap-1 text-electric py-1 min-w-[64px] cursor-pointer">
           <Home className="w-6 h-6" strokeWidth={2} />
           <span className="text-[11px] font-bold">Головна</span>
         </button>
-        <button onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })} className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 py-1.5 min-w-[64px] cursor-pointer transition-colors">
+        <button onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })} className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 py-1 min-w-[64px] cursor-pointer transition-colors">
           <Grid className="w-6 h-6" strokeWidth={2} />
           <span className="text-[11px] font-medium">Послуги</span>
         </button>
-        <button onClick={() => document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' })} className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 py-1.5 min-w-[64px] cursor-pointer transition-colors">
+        <button onClick={() => document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' })} className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 py-1 min-w-[64px] cursor-pointer transition-colors">
           <Search className="w-6 h-6" strokeWidth={2} />
           <span className="text-[11px] font-medium">FAQ</span>
         </button>
