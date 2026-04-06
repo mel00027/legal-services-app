@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+server/node_modules/
+
+# Build output
+dist/
+
+# Environment secrets
+.env
+server/.env
+
+# Database (CRITICAL: must NOT be in Git, stores client data for years)
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+server/database.sqlite
+
+# PM2 logs
+logs/
+server/bot_errors.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

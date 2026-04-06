@@ -1,0 +1,14 @@
+{
+  "name": "legalclick-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot for LegalClick",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "sqlite": "^5.1.1",
+    "sqlite3": "^6.0.1"
+  }
+}
