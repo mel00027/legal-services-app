@@ -19,7 +19,11 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /opt/legalclick
+            # Preserve .env file across deploys
+            cp server/.env /tmp/legalclick_env_backup 2>/dev/null || true
             git pull origin master
+            # Restore .env file
+            cp /tmp/legalclick_env_backup server/.env 2>/dev/null || true
             npm install
             cd server && npm install
             cd ..
