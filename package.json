@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npx vercel --prod --confirm",
+    "deploy:preview": "npx vercel --confirm"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +24,7 @@
     "@tailwindcss/vite": "^4.2.2",
     "@vitejs/plugin-react": "^6.0.1",
     "tailwindcss": "^4.2.2",
+    "vercel": "^34.4.0",
     "vite": "^8.0.3"
   }
 }
