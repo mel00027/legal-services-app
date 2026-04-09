@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MilitaryLawyer } from './pages/MilitaryLawyer';
+import { HousingLaw } from './pages/HousingLaw';
 
 /* ======================== DATA ======================== */
 
@@ -43,8 +44,7 @@ const faqData = [
 
 const serviceItems = [
   { name: 'Захист прав військовослужбовців', icon: ShieldCheck, path: '/military-lawyer' },
-  { name: 'Цивільні пенсії', icon: Accessibility },
-  { name: 'Житлове право', icon: Home },
+  { name: 'Житлове право', icon: Home, path: '/housing-law' },
   { name: 'Адміністративні правопорушення', icon: Scale },
 ];
 
@@ -668,6 +668,7 @@ const AppLayout = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/military-lawyer" element={<MilitaryLawyer />} />
+          <Route path="/housing-law" element={<HousingLaw />} />
         </Routes>
       </main>
 
