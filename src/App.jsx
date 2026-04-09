@@ -150,18 +150,18 @@ const ResponsiveApp = () => {
       {/* ========== HEADER ========== */}
       
       {/* Mobile Header */}
-      <header className="md:hidden fixed top-0 w-full px-4 py-3 flex justify-center items-center bg-white/95 backdrop-blur-sm z-50 shadow-sm border-b border-gray-100">
+      <header className="md:hidden fixed top-0 w-full px-4 py-2.5 flex justify-center items-center bg-white/95 backdrop-blur-sm z-50 shadow-sm border-b border-gray-100">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-electric text-white flex items-center justify-center font-bold text-lg">L</div>
-          <span className="text-lg font-bold tracking-tight">Legal<span className="text-electric">Click</span></span>
+          <div className="w-7 h-7 rounded-xl bg-electric text-white flex items-center justify-center font-bold text-base">L</div>
+          <span className="text-[17px] font-bold tracking-tight">Legal<span className="text-electric">Click</span></span>
         </div>
       </header>
 
       {/* Desktop Header */}
-      <header className="hidden md:flex w-full px-8 lg:px-16 py-6 items-center justify-between bg-white/95 backdrop-blur-md border-b border-gray-50 fixed top-0 left-0 z-50">
+      <header className="hidden md:flex w-full px-8 lg:px-16 py-5 items-center justify-between bg-white/95 backdrop-blur-md border-b border-gray-50 fixed top-0 left-0 z-50">
         <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-xl bg-electric text-white flex items-center justify-center font-bold text-2xl">L</div>
-          <span className="text-2xl font-bold tracking-tight">Legal<span className="text-electric">Click</span></span>
+          <div className="w-9 h-9 rounded-xl bg-electric text-white flex items-center justify-center font-bold text-xl">L</div>
+          <span className="text-xl font-bold tracking-tight">Legal<span className="text-electric">Click</span></span>
         </div>
         <nav className="flex items-center gap-8 font-semibold text-graphite">
           <a href="#services" onClick={(e) => { e.preventDefault(); document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' }); }} className="hover:text-electric transition-colors">Послуги</a>
