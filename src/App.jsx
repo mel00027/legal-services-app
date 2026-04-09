@@ -618,6 +618,9 @@ const AppLayout = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // Scroll to top on route change
+    window.scrollTo(0, 0);
+
     // Reset document title to default when on home
     if (location.pathname === '/') {
       document.title = 'LegalClick — Юрист у твоєму смартфоні';
