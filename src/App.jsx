@@ -144,6 +144,28 @@ const ServiceCard = memo(({ name, icon: Icon }) => (
 /* ======================== MAIN APP ======================== */
 
 const ResponsiveApp = () => {
+  const [activeTab, setActiveTab] = useState('home');
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setActiveTab(entry.target.id);
+        }
+      });
+    }, {
+      rootMargin: '-30% 0px -70% 0px' 
+    });
+
+    const sections = ['home', 'services', 'faq'];
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="min-h-screen bg-app-bg md:bg-white text-graphite font-sans overflow-x-hidden pt-14 md:pt-[88px] pb-24 md:pb-0">
       
@@ -183,7 +205,7 @@ const ResponsiveApp = () => {
       <main className="w-full">
         
         {/* ===== HERO ===== */}
-        <section className="px-5 py-6 md:px-8 lg:px-16 md:py-20 lg:py-24 bg-gradient-to-b md:bg-gradient-to-r from-white md:from-blue-50/80 to-blue-50/50 md:to-white overflow-hidden relative">
+        <section id="home" className="px-5 py-6 md:px-8 lg:px-16 md:py-20 lg:py-24 bg-gradient-to-b md:bg-gradient-to-r from-white md:from-blue-50/80 to-blue-50/50 md:to-white overflow-hidden relative">
           <div className="hidden md:block absolute right-0 top-0 w-1/2 h-full bg-electric/5 rounded-l-[100px] -z-10"></div>
           
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12 lg:gap-24 relative z-10">
@@ -544,17 +566,17 @@ const ResponsiveApp = () => {
 
       {/* ========== MOBILE BOTTOM TAB BAR ========== */}
       <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 px-4 pt-1.5 pb-1.5 flex justify-around items-center z-50 safe-bottom">
-        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex flex-col items-center gap-0.5 text-electric py-1 min-w-[56px] cursor-pointer">
+        <button onClick={() => { document.getElementById('home')?.scrollIntoView({ behavior: 'smooth' }); setActiveTab('home'); }} className={`flex flex-col items-center gap-0.5 py-1 min-w-[56px] cursor-pointer transition-colors ${activeTab === 'home' ? 'text-electric' : 'text-gray-400 hover:text-gray-600'}`}>
           <Home className="w-5 h-5" strokeWidth={2.5} />
-          <span className="text-[10px] font-bold">Головна</span>
+          <span className={`text-[10px] ${activeTab === 'home' ? 'font-bold' : 'font-medium'}`}>Головна</span>
         </button>
-        <button onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })} className="flex flex-col items-center gap-0.5 text-gray-400 hover:text-gray-600 py-1 min-w-[56px] cursor-pointer transition-colors">
+        <button onClick={() => { document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' }); setActiveTab('services'); }} className={`flex flex-col items-center gap-0.5 py-1 min-w-[56px] cursor-pointer transition-colors ${activeTab === 'services' ? 'text-electric' : 'text-gray-400 hover:text-gray-600'}`}>
           <Grid className="w-5 h-5" strokeWidth={2.5} />
-          <span className="text-[10px] font-medium">Послуги</span>
+          <span className={`text-[10px] ${activeTab === 'services' ? 'font-bold' : 'font-medium'}`}>Послуги</span>
         </button>
-        <button onClick={() => document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' })} className="flex flex-col items-center gap-0.5 text-gray-400 hover:text-gray-600 py-1 min-w-[56px] cursor-pointer transition-colors">
+        <button onClick={() => { document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' }); setActiveTab('faq'); }} className={`flex flex-col items-center gap-0.5 py-1 min-w-[56px] cursor-pointer transition-colors ${activeTab === 'faq' ? 'text-electric' : 'text-gray-400 hover:text-gray-600'}`}>
           <Search className="w-5 h-5" strokeWidth={2.5} />
-          <span className="text-[10px] font-medium">FAQ</span>
+          <span className={`text-[10px] ${activeTab === 'faq' ? 'font-bold' : 'font-medium'}`}>FAQ</span>
         </button>
         <a href={BOT_LINK} className="flex flex-col items-center gap-0.5 text-gray-400 hover:text-gray-600 py-1 min-w-[56px] cursor-pointer transition-colors">
           <MessageCircle className="w-5 h-5" strokeWidth={2.5} />
