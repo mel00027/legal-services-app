@@ -129,54 +129,23 @@ export const MilitaryLawyer = () => {
         </div>
       </section>
 
-      {/* ===== CONTACT FORM ===== */}
-      <section className="px-4 md:px-5 py-12 md:py-24 bg-white">
-        <div className="max-w-3xl mx-auto bg-graphite rounded-[32px] md:rounded-[48px] p-8 md:p-16 text-white text-center shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-electric/20 rounded-full blur-[100px] pointer-events-none"></div>
-          
-          <div className="relative z-10">
-            <h2 className="text-2xl md:text-4xl font-bold mb-4">Потрібна допомога?</h2>
-            <p className="text-gray-400 mb-8 md:mb-12">Опишіть вашу ситуацію, і ми негайно розпочнемо роботу.</p>
-            
-            <form onSubmit={handleFormSubmit} className="flex flex-col gap-4 max-w-md mx-auto text-left">
-              <div>
-                <input 
-                  type="text" 
-                  required
-                  placeholder="Ваше ім'я" 
-                  className="w-full bg-white/10 border border-white/20 rounded-xl px-5 py-4 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-electric"
-                  value={formData.name}
-                  onChange={e => setFormData({...formData, name: e.target.value})}
-                />
-              </div>
-              <div>
-                <input 
-                  type="tel" 
-                  required
-                  placeholder="Номер телефону" 
-                  className="w-full bg-white/10 border border-white/20 rounded-xl px-5 py-4 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-electric"
-                  value={formData.phone}
-                  onChange={e => setFormData({...formData, phone: e.target.value})}
-                />
-              </div>
-              <div>
-                <textarea 
-                  required
-                  placeholder="Короткий опис проблеми" 
-                  rows={4}
-                  className="w-full bg-white/10 border border-white/20 rounded-xl px-5 py-4 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-electric resize-none"
-                  value={formData.problem}
-                  onChange={e => setFormData({...formData, problem: e.target.value})}
-                ></textarea>
-              </div>
-              <button 
-                type="submit" 
-                className="w-full bg-mint text-graphite font-bold rounded-xl py-4 flex items-center justify-center gap-2 hover:bg-white transition-colors mt-2"
-              >
-                Відправити в Telegram <ChevronRight className="w-5 h-5" />
-              </button>
-            </form>
+      {/* ===== FOOTER CTA ===== */}
+      <section className="px-4 md:px-5 pb-8 md:pb-32 bg-white relative text-center">
+        <div className="max-w-5xl mx-auto bg-blue-50/50 border border-blue-100 rounded-2xl md:rounded-[40px] p-8 md:p-20 shadow-lg md:shadow-xl shadow-blue-900/5">
+          <div className="w-14 h-14 md:w-20 md:h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-5 md:mb-8 shadow-sm">
+            <MessageCircle className="w-7 h-7 md:w-10 md:h-10 text-electric" strokeWidth={2.5} />
           </div>
+          <h2 className="text-xl md:text-5xl font-bold mb-3 md:mb-6 text-graphite">Юридична підтримка — в одному кліку</h2>
+          <p className="text-sm md:text-xl text-gray-500 mb-6 md:mb-10 max-w-2xl mx-auto leading-relaxed">Не відкладайте на потім. Відкрийте чат, опишіть ситуацію і отримайте план дій вже сьогодні.</p>
+          <motion.a 
+            href={BOT_LINK}
+            className="inline-flex bg-electric text-white font-bold py-3.5 px-8 md:py-5 md:px-10 rounded-xl md:rounded-2xl hover:bg-electric-hover shadow-xl shadow-electric/30 items-center justify-center gap-2 md:gap-3 text-base md:text-xl active:scale-95 transition-transform"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+          >
+            Чат з юристом <ChevronRight className="w-5 h-5 md:w-6 md:h-6" strokeWidth={3} />
+          </motion.a>
         </div>
       </section>
 
