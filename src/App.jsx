@@ -1,5 +1,5 @@
 import React, { useState, useEffect, memo, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   MessageCircle, ShieldCheck, Home, 
   Grid, Search, User, ChevronRight,
@@ -150,12 +150,16 @@ const ServiceCard = memo(({ name, icon: Icon, path }) => {
 
 const NavigationHeader = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isHome = location.pathname === '/';
 
   const handleNavClick = (e, id) => {
     e.preventDefault();
     if (!isHome) {
-      window.location.href = `/#${id}`;
+      navigate('/');
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     } else {
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     }
@@ -196,11 +200,20 @@ const NavigationHeader = () => {
 
 const MobileBottomBar = ({ activeTab, setActiveTab }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isHome = location.pathname === '/';
 
   const handleNavClick = (id) => {
     if (!isHome) {
-      window.location.href = id === 'home' ? '/' : `/#${id}`;
+      navigate('/');
+      setTimeout(() => {
+        if (id === 'home') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+        }
+        setActiveTab(id);
+      }, 100);
     } else {
       if (id === 'home') {
         window.scrollTo({ top: 0, behavior: 'smooth' });
