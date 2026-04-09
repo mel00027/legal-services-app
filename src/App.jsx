@@ -158,10 +158,12 @@ const NavigationHeader = () => {
     if (!isHome) {
       navigate('/');
       setTimeout(() => {
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+        if (id === 'home') window.scrollTo({ top: 0, behavior: 'smooth' });
+        else document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     } else {
-      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      if (id === 'home') window.scrollTo({ top: 0, behavior: 'smooth' });
+      else document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -180,6 +182,7 @@ const NavigationHeader = () => {
           <span className="text-xl font-bold tracking-tight text-graphite">Legal<span className="text-electric">Click</span></span>
         </Link>
         <nav className="flex items-center gap-8 font-semibold text-graphite">
+          <a href="/" onClick={(e) => handleNavClick(e, 'home')} className="hover:text-electric transition-colors">Головна</a>
           <a href="/#services" onClick={(e) => handleNavClick(e, 'services')} className="hover:text-electric transition-colors">Послуги</a>
           <a href="/#about" onClick={(e) => handleNavClick(e, 'about')} className="hover:text-electric transition-colors">Як це працює</a>
           <a href="/#faq" onClick={(e) => handleNavClick(e, 'faq')} className="hover:text-electric transition-colors">FAQ</a>
