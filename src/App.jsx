@@ -178,7 +178,6 @@ const NavigationHeader = () => {
         <nav className="flex items-center gap-8 font-semibold text-graphite">
           <a href="/#services" onClick={(e) => handleNavClick(e, 'services')} className="hover:text-electric transition-colors">Послуги</a>
           <a href="/#about" onClick={(e) => handleNavClick(e, 'about')} className="hover:text-electric transition-colors">Як це працює</a>
-          <Link to="/military-lawyer" className="hover:text-electric transition-colors">Захист військових</Link>
           <a href="/#faq" onClick={(e) => handleNavClick(e, 'faq')} className="hover:text-electric transition-colors">FAQ</a>
         </nav>
         <motion.a 
