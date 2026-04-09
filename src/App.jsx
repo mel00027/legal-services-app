@@ -150,14 +150,11 @@ const ResponsiveApp = () => {
       {/* ========== HEADER ========== */}
       
       {/* Mobile Header */}
-      <header className="md:hidden fixed top-0 w-full px-4 py-3 flex justify-between items-center bg-white/95 backdrop-blur-sm z-50 shadow-sm border-b border-gray-100">
+      <header className="md:hidden fixed top-0 w-full px-4 py-3 flex justify-center items-center bg-white/95 backdrop-blur-sm z-50 shadow-sm border-b border-gray-100">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-xl bg-electric text-white flex items-center justify-center font-bold text-lg">L</div>
           <span className="text-lg font-bold tracking-tight">Legal<span className="text-electric">Click</span></span>
         </div>
-        <a href={BOT_LINK} className="bg-electric text-white px-4 py-2 rounded-xl font-semibold text-sm flex items-center gap-1.5 active:scale-95 transition-transform">
-          <MessageCircle className="w-4 h-4" /> Чат
-        </a>
       </header>
 
       {/* Desktop Header */}
@@ -546,19 +543,23 @@ const ResponsiveApp = () => {
       </main>
 
       {/* ========== MOBILE BOTTOM TAB BAR ========== */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 px-6 pt-2 pb-2 flex justify-around items-center z-50 safe-bottom">
-        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex flex-col items-center gap-1 text-electric py-1 min-w-[64px] cursor-pointer">
-          <Home className="w-6 h-6" strokeWidth={2} />
-          <span className="text-[11px] font-bold">Головна</span>
+      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 px-4 pt-1.5 pb-1.5 flex justify-around items-center z-50 safe-bottom">
+        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex flex-col items-center gap-0.5 text-electric py-1 min-w-[56px] cursor-pointer">
+          <Home className="w-5 h-5" strokeWidth={2.5} />
+          <span className="text-[10px] font-bold">Головна</span>
         </button>
-        <button onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })} className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 py-1 min-w-[64px] cursor-pointer transition-colors">
-          <Grid className="w-6 h-6" strokeWidth={2} />
-          <span className="text-[11px] font-medium">Послуги</span>
+        <button onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })} className="flex flex-col items-center gap-0.5 text-gray-400 hover:text-gray-600 py-1 min-w-[56px] cursor-pointer transition-colors">
+          <Grid className="w-5 h-5" strokeWidth={2.5} />
+          <span className="text-[10px] font-medium">Послуги</span>
         </button>
-        <button onClick={() => document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' })} className="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-600 py-1 min-w-[64px] cursor-pointer transition-colors">
-          <Search className="w-6 h-6" strokeWidth={2} />
-          <span className="text-[11px] font-medium">FAQ</span>
+        <button onClick={() => document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' })} className="flex flex-col items-center gap-0.5 text-gray-400 hover:text-gray-600 py-1 min-w-[56px] cursor-pointer transition-colors">
+          <Search className="w-5 h-5" strokeWidth={2.5} />
+          <span className="text-[10px] font-medium">FAQ</span>
         </button>
+        <a href={BOT_LINK} className="flex flex-col items-center gap-0.5 text-gray-400 hover:text-gray-600 py-1 min-w-[56px] cursor-pointer transition-colors">
+          <MessageCircle className="w-5 h-5" strokeWidth={2.5} />
+          <span className="text-[10px] font-medium">Чат</span>
+        </a>
       </nav>
 
       {/* ========== DESKTOP FOOTER ========== */}
