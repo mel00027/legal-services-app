@@ -237,11 +237,10 @@ const MobileBottomBar = ({ activeTab, setActiveTab }) => {
         <Grid className="w-5 h-5" strokeWidth={2.5} />
         <span className={`text-[10px] ${activeTab === 'services' && isHome ? 'font-bold' : 'font-medium'}`}>Послуги</span>
       </button>
-      {/* Military Icon replacing FAQ or shifting FAQ */}
-      <Link to="/military-lawyer" className={`flex flex-col items-center gap-0.5 py-1 min-w-[56px] cursor-pointer transition-colors ${!isHome ? 'text-electric' : 'text-gray-400 hover:text-gray-600'}`}>
-        <ShieldCheck className="w-5 h-5" strokeWidth={2.5} />
-        <span className={`text-[10px] ${!isHome ? 'font-bold' : 'font-medium'}`}>Військовий</span>
-      </Link>
+      <button onClick={() => handleNavClick('faq')} className={`flex flex-col items-center gap-0.5 py-1 min-w-[56px] cursor-pointer transition-colors ${activeTab === 'faq' && isHome ? 'text-electric' : 'text-gray-400 hover:text-gray-600'}`}>
+        <Search className="w-5 h-5" strokeWidth={2.5} />
+        <span className={`text-[10px] ${activeTab === 'faq' && isHome ? 'font-bold' : 'font-medium'}`}>FAQ</span>
+      </button>
       <a href={BOT_LINK} className="flex flex-col items-center gap-0.5 text-gray-400 hover:text-gray-600 py-1 min-w-[56px] cursor-pointer transition-colors">
         <MessageCircle className="w-5 h-5" strokeWidth={2.5} />
         <span className="text-[10px] font-medium">Чат</span>
