@@ -341,7 +341,7 @@ const ResponsiveApp = () => {
               <div className="min-w-[260px] md:min-w-0 md:w-full bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 lg:p-10 snap-center shrink-0 shadow-lg md:shadow-xl shadow-blue-900/5 md:transition-all md:duration-500 md:hover:-translate-y-3 md:hover:shadow-[0_20px_40px_-15px_rgba(0,82,255,0.2)] border border-slate-100 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full -mt-10 -mr-10 blur-2xl"></div>
                 <Zap className="w-10 h-10 md:w-12 md:h-12 text-electric mb-5 md:mb-8 relative z-10" strokeWidth={2.5} />
-                <h3 className="font-bold text-base md:text-xl mb-3 md:mb-4 text-electric relative z-10">⚡️ Включаємось за 15 хвилин</h3>
+                <h3 className="font-bold text-base md:text-xl mb-3 md:mb-4 text-electric relative z-10">⚡️ Оперативний зв'язок</h3>
                 <ul className="space-y-2 md:space-y-3 text-gray-500 text-sm leading-relaxed list-disc pl-5 relative z-10">
                   <li>Діємо негайно, без записів</li>
                   <li>Автоматичний розподіл юристу</li>
