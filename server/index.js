@@ -57,7 +57,7 @@ const getMainMenu = () => {
   return Markup.inlineKeyboard([
     [Markup.button.callback('🛡 Військове право', 'category_military')],
     [Markup.button.callback('🏠 Житлові питання', 'category_housing')],
-    [Markup.button.callback('📄 Документи', 'category_documents')],
+    [Markup.button.callback('⚖️ Адміністративні правопорушення', 'category_admin_offenses')],
     [Markup.button.callback('❓ Інше', 'category_other')]
   ]);
 };
@@ -144,7 +144,7 @@ bot.action(/^category_(.+)/, async (ctx) => {
   let categoryName = 'Інше';
   switch(categoryId) {
     case 'housing': categoryName = 'Житлові питання'; break;
-    case 'documents': categoryName = 'Документи'; break;
+    case 'admin_offenses': categoryName = 'Адміністративні правопорушення'; break;
   }
 
   await checkAgreementAndProceed(ctx, categoryName);
