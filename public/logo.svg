@@ -8,11 +8,12 @@
       .text {
         font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         font-weight: 900;
-        font-size: 320px;
+        font-size: 340px;
         fill: #FFFFFF;
       }
     </style>
   </defs>
   <rect x="0" y="0" width="512" height="512" rx="120" fill="url(#grad)" />
-  <text x="50%" y="50%" class="text" text-anchor="middle" dominant-baseline="central" dy="25">L</text>
+  <!-- Adjusted x and y for proper visual centering of 'L' -->
+  <text x="272" y="375" class="text" text-anchor="middle">L</text>
 </svg>
