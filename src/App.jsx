@@ -741,7 +741,7 @@ const HomePage = () => {
               <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-[#F59E0B]/15 border border-[#F59E0B]/20 flex items-center justify-center shrink-0">
                 <span className="text-2xl md:text-3xl" role="img" aria-label="Card">💳</span>
               </div>
-              <h3 className="font-black text-lg md:text-2xl text-white">Первинна консультація та аналіз</h3>
+              <h3 className="font-black text-lg md:text-2xl text-white">Первинна консультація та попередній аналіз документів</h3>
             </div>
 
             <div className="mb-7 md:mb-10">
