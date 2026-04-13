@@ -745,7 +745,7 @@ const HomePage = () => {
             </div>
 
             <div className="mb-7 md:mb-10">
-              <span className="text-5xl md:text-7xl font-black text-gradient-gold">500</span>
+              <span className="text-5xl md:text-7xl font-black text-gradient-gold">1000</span>
               <span className="text-2xl md:text-3xl text-white/40 font-bold ml-2">грн</span>
             </div>
 
@@ -777,7 +777,7 @@ const HomePage = () => {
               whileTap={{ scale: 0.96 }}
               transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             >
-              Почати за 500 грн <ArrowRight className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5} />
+              Почати за 1000 грн <ArrowRight className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5} />
             </motion.a>
           </div>
         </div>
