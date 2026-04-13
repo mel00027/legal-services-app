@@ -111,7 +111,7 @@ const AccordionItem = memo(({ question, answer }) => {
           ? 'bg-white shadow-lg border border-blue-100'
           : 'bg-white border border-gray-100 shadow-sm hover:border-blue-100 hover:shadow-md'
       }`}
-      style={{ transition: 'box-shadow 0.25s ease, border-color 0.25s ease' }}
+      style={{ transition: 'box-shadow 0.2s ease, border-color 0.2s ease' }}
     >
       <button
         className="w-full flex items-center justify-between p-5 md:p-6 text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2 rounded-2xl bg-transparent"
@@ -130,22 +130,23 @@ const AccordionItem = memo(({ question, answer }) => {
           <ChevronUp className={`w-4 h-4 ${open ? 'text-white' : 'text-[#2563EB]'}`} style={{ transition: 'color 0.2s ease' }} />
         </div>
       </button>
-      <div
-        className="grid"
-        style={{
-          transition: 'grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease',
-          gridTemplateRows: open ? '1fr' : '0fr',
-          opacity: open ? 1 : 0
-        }}
-      >
-        <div className="overflow-hidden">
-          <div className="px-5 md:px-6 pb-5 md:pb-6">
-            <p className="text-[#475569] leading-relaxed text-sm md:text-base border-t border-gray-100 pt-4">
-              {answer}
-            </p>
-          </div>
-        </div>
-      </div>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="px-5 md:px-6 pb-5 md:pb-6">
+              <p className="text-[#475569] leading-relaxed text-sm md:text-base border-t border-gray-100 pt-4">
+                {answer}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 });
