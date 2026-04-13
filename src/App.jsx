@@ -777,7 +777,7 @@ const HomePage = () => {
               whileTap={{ scale: 0.96 }}
               transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             >
-              Почати за 1000 грн <ArrowRight className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5} />
+              Почати <ArrowRight className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5} />
             </motion.a>
           </div>
         </div>
