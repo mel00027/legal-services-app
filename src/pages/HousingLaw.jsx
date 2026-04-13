@@ -5,7 +5,7 @@ import {
   ShieldCheck, MessageCircle, ScrollText, ArrowRight, CheckCircle2
 } from 'lucide-react';
 
-const BOT_LINK = "https://t.me/legal_click_bot";
+const BOT_LINK = "https://t.me/legal_click_bot?start=hello";
 
 const services = [
   {

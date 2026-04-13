@@ -59,7 +59,7 @@ const faqSchema = {
   })),
 };
 
-const BOT_LINK = 'https://t.me/legal_click_bot';
+const BOT_LINK = 'https://t.me/legal_click_bot?start=hello';
 
 /* ======================== COMPONENTS ======================== */
 
@@ -365,7 +365,7 @@ const HomePage = () => {
           {/* Status badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-dark text-white/75 text-[11px] font-semibold uppercase tracking-[0.1em] mb-7">
             <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_#4ade80]" />
-            100% Онлайн · Відповідь за 12 хвилин
+            100% Онлайн · Відповідь за 20-30 хвилин
           </div>
 
           <h1 className="text-[38px] sm:text-5xl md:text-5xl lg:text-[68px] font-black text-white leading-[1.05] tracking-tight mb-5 md:mb-7">
@@ -602,31 +602,30 @@ const HomePage = () => {
         </div>
 
         {/* Mobile steps */}
-        <div className="md:hidden relative pl-7 border-l border-white/10 space-y-8">
+        <div className="md:hidden space-y-8">
           {[
             { n: '1', title: 'Обираєте послугу', desc: 'Натисніть потрібний напрямок у боті. Не впевнені? Тисніть «Інше», і ми зорієнтуємо!', accent: false },
             { n: '2', title: 'Пишете в чат', desc: 'Опишіть ситуацію та додайте фото. Юрист вже вивчає документи і будує стратегію.', accent: false },
             { n: '3', title: 'Отримуєте рішення', desc: 'В смартфон надходить покроковий план або готові документи. Все зрозумілою мовою.', accent: true },
           ].map(({ n, title, desc, accent }) => (
-            <div key={n} className="relative">
+            <div key={n} className="text-center">
               <div
-                className={`absolute -left-[38px] top-0 w-9 h-9 rounded-full flex items-center justify-center font-black text-sm border-2 ${
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-base mx-auto mb-3 ${
                   accent
                     ? 'bg-gradient-to-br from-[#2563EB] to-[#7C3AED] border-transparent text-white shadow-[0_0_20px_rgba(37,99,235,0.5)]'
-                    : 'bg-[#0D1B2E] border-white/15 text-white/80'
+                    : 'bg-[#0D1B2E] border-2 border-white/15 text-white/80'
                 }`}
               >
                 {n}
               </div>
               <h3 className="font-black text-lg mb-1.5">{title}</h3>
-              <p className="text-white/50 text-sm leading-relaxed">{desc}</p>
+              <p className="text-white/50 text-sm leading-relaxed max-w-xs mx-auto">{desc}</p>
             </div>
           ))}
         </div>
 
         {/* Desktop steps */}
         <div className="hidden md:grid grid-cols-3 gap-8 lg:gap-12 relative">
-          <div className="absolute top-7 left-[calc(33.33%+20px)] right-[calc(33.33%+20px)] h-[2px] bg-gradient-to-r from-[#2563EB]/40 to-[#7C3AED]/40 z-0" />
           {[
             { n: '1', title: 'Обираєте послугу', desc: 'Просто натисніть потрібний напрямок у боті. Тисніть «Інше», і ми миттєво зорієнтуємо!', accent: false },
             { n: '2', title: 'Пишете в чат', desc: 'Опишіть ситуацію та додайте фото документів. Юрист вже будує правову стратегію.', accent: false },
@@ -670,7 +669,7 @@ const HomePage = () => {
           {[
             { value: '5,000+', label: 'Вирішених справ' },
             { value: '4.9', label: 'Рейтинг платформи' },
-            { value: '~12 хв', label: 'Час першої відповіді' },
+            { value: '20-30 хв', label: 'Час першої відповіді' },
             { value: '100%', label: 'Онлайн без черги' },
           ].map(({ value, label }) => (
             <div key={label} className="text-center bg-[#F8FAFF] rounded-2xl p-4 md:p-8 border border-gray-100">

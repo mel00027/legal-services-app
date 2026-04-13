@@ -6,7 +6,7 @@ import {
   MessageCircle, ArrowRight, CheckCircle2
 } from 'lucide-react';
 
-const BOT_LINK = "https://t.me/legal_click_bot";
+const BOT_LINK = "https://t.me/legal_click_bot?start=hello";
 
 const services = [
   {
@@ -63,7 +63,7 @@ const services = [
 const stats = [
   { value: '2,800+', label: 'Справ військових' },
   { value: '94%', label: 'Успішних рішень' },
-  { value: '~12 хв', label: 'Час відповіді' },
+  { value: '20-30 хв', label: 'Час відповіді' },
   { value: '100%', label: 'Онлайн' },
 ];
 
