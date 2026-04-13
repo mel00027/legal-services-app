@@ -1,13 +1,62 @@
 @import "tailwindcss";
 
+/* ╔══════════════════════════════════════════════════════════╗
+   ║  LegalClick Design System v2 — Premium Legal             ║
+   ║  Deep Navy · Royal Blue · Gold Accent                   ║
+   ╚══════════════════════════════════════════════════════════╝ */
+
 @theme {
-  --color-electric: #0052FF;
-  --color-electric-hover: #0042cc;
-  --color-graphite: #1C1C1E;
-  --color-graphite-light: #2C2C2E;
-  --color-mint: #00E5FF;
-  --color-app-bg: #F2F2F7;
+  /* ── Primary Brand Colors ── */
+  --color-electric: #2563EB;
+  --color-electric-hover: #1D4ED8;
+  --color-electric-light: #EFF6FF;
+  --color-electric-vivid: #3B82F6;
+
+  /* ── Navy (Dark sections) ── */
+  --color-navy: #020817;
+  --color-navy-soft: #0D1B2E;
+  --color-navy-card: #0F2040;
+  --color-navy-border: rgba(255, 255, 255, 0.08);
+
+  /* ── Gold Accent ── */
+  --color-gold: #F59E0B;
+  --color-gold-hover: #D97706;
+  --color-gold-light: rgba(245, 158, 11, 0.12);
+  --color-gold-border: rgba(245, 158, 11, 0.3);
+
+  /* ── Graphite (kept for compatibility) ── */
+  --color-graphite: #0F1419;
+  --color-graphite-light: #1C2128;
+
+  /* ── Violet accent ── */
+  --color-violet: #7C3AED;
+  --color-violet-light: rgba(124, 58, 237, 0.15);
+
+  /* ── Neutrals ── */
+  --color-app-bg: #F8FAFF;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: rgba(255, 255, 255, 0.06);
+  --color-border-subtle: rgba(0, 0, 0, 0.06);
+  --color-border-medium: rgba(0, 0, 0, 0.1);
+  --color-text-primary: #0D1B2E;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #94A3B8;
+
+  /* ── Golden Ratio Typography Scale (1:1.618) ── */
+  --font-size-caption: 0.75rem;
+  --font-size-small: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-body-lg: 1.125rem;
+  --font-size-title: 1.618rem;
+  --font-size-heading: 2.618rem;
+  --font-size-display: 4.236rem;
+
+  /* ── 8px Spacing Grid ── */
+  --spacing-unit: 0.5rem;
 }
+
+/* ── Google Fonts — Inter for Swiss precision ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 html {
   scroll-behavior: smooth;
@@ -17,40 +66,223 @@ html {
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--color-app-bg);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior-y: none;
+  line-height: 1.618;
+  letter-spacing: -0.011em;
 }
 
-/* Hide scrollbar for clean app look */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* iPhone safe area bottom padding */
-.safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
+/* ── Glassmorphism Utilities ── */
+.glass-panel {
+  background: var(--color-surface-elevated);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--color-navy-border);
 }
 
-/* Smooth touch scrolling on iOS */
-.scroll-touch {
-  -webkit-overflow-scrolling: touch;
+.glass-dark {
+  background: rgba(15, 32, 64, 0.7);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-/* Prevent tap highlight on mobile */
-button, a, [role="button"] {
-  -webkit-tap-highlight-color: transparent;
+.glass-light {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
 }
 
-/* Optimize animations on mobile */
+/* ── Card Elevation System ── */
+.elevation-1 {
+  box-shadow:
+    0 1px 2px rgba(13, 27, 46, 0.04),
+    0 1px 3px rgba(13, 27, 46, 0.04);
+}
+
+.elevation-2 {
+  box-shadow:
+    0 2px 8px rgba(13, 27, 46, 0.06),
+    0 4px 16px rgba(13, 27, 46, 0.04);
+}
+
+.elevation-3 {
+  box-shadow:
+    0 8px 24px rgba(13, 27, 46, 0.08),
+    0 16px 48px rgba(13, 27, 46, 0.06);
+}
+
+.elevation-glow-blue {
+  box-shadow:
+    0 8px 32px rgba(37, 99, 235, 0.18),
+    0 2px 8px rgba(37, 99, 235, 0.08);
+}
+
+.elevation-glow-gold {
+  box-shadow:
+    0 8px 32px rgba(245, 158, 11, 0.20),
+    0 2px 8px rgba(245, 158, 11, 0.10);
+}
+
+/* ── Gradient Text Effects ── */
+.text-gradient-blue {
+  background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-white {
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.75) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── legacy aliases ── */
+.text-gradient-electric { background: linear-gradient(135deg, #2563EB, #7C3AED); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.text-gradient-hero { background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.7) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+/* ── Gradient Border Cards ── */
+.card-gradient-border {
+  position: relative;
+  background: white;
+  border-radius: 20px;
+}
+.card-gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1.5px;
+  background: linear-gradient(135deg, #2563EB20, #7C3AED20);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ── Premium Transitions ── */
+.transition-premium {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-lift {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 20px 40px -12px rgba(37, 99, 235, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* ── Animated Glow Pulse ── */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(37, 99, 235, 0.35), 0 0 60px rgba(37, 99, 235, 0.12); }
+  50% { box-shadow: 0 0 30px rgba(37, 99, 235, 0.55), 0 0 80px rgba(37, 99, 235, 0.18); }
+}
+.cta-glow {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes gold-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3), 0 0 60px rgba(245, 158, 11, 0.08); }
+  50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.5), 0 0 80px rgba(245, 158, 11, 0.12); }
+}
+.gold-glow {
+  animation: gold-pulse 3s ease-in-out infinite;
+}
+
+/* ── Ambient Blobs ── */
+@keyframes blob-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(30px, -50px) scale(1.05); }
+  66%  { transform: translate(-20px, 20px) scale(0.95); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+.ambient-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+  pointer-events: none;
+  animation: blob-drift 20s ease-in-out infinite;
+}
+
+/* ── Subtle Grain Texture ── */
+.bg-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.018;
+  pointer-events: none;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' /%3E%3C/svg%3E");
+}
+
+/* ── Divider ── */
+.divider-subtle {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-border-subtle), transparent);
+}
+
+/* ── Scrollbar hiding ── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Safe area ── */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+/* ── iOS smooth scroll ── */
+.scroll-touch { -webkit-overflow-scrolling: touch; }
+
+/* ── No tap highlight ── */
+button, a, [role="button"] { -webkit-tap-highlight-color: transparent; }
+
+/* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ── Number badge for steps ── */
+.step-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+/* ── Section headings ── */
+.section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
