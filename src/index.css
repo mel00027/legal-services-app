@@ -276,7 +276,8 @@ button, a, [role="button"] { -webkit-tap-highlight-color: transparent; }
 
 /* ── Section headings ── */
 .section-eyebrow {
-  display: inline-flex;
+  display: flex;
+  width: fit-content;
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
