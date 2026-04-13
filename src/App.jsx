@@ -106,15 +106,15 @@ const AccordionItem = memo(({ question, answer }) => {
 
   return (
     <div
-      className={`rounded-2xl overflow-hidden ${
+      className={`rounded-2xl ${
         open
           ? 'bg-white shadow-lg border border-blue-100'
-          : 'bg-white border border-gray-100 shadow-sm hover:border-blue-100 hover:shadow-md'
+          : 'bg-white border border-gray-100 shadow-sm'
       }`}
-      style={{ transition: 'box-shadow 0.2s ease, border-color 0.2s ease' }}
+      style={{ WebkitTransform: 'translateZ(0)', transform: 'translateZ(0)', willChange: 'transform' }}
     >
       <button
-        className="w-full flex items-center justify-between p-5 md:p-6 text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2 rounded-2xl bg-transparent"
+        className={`w-full flex items-center justify-between p-5 md:p-6 text-left outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2 bg-transparent ${open ? 'rounded-t-2xl' : 'rounded-2xl'}`}
         onClick={() => setOpen(!open)}
         aria-expanded={open}
       >
@@ -138,6 +138,7 @@ const AccordionItem = memo(({ question, answer }) => {
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
+            style={{ willChange: 'height, opacity', WebkitTransform: 'translateZ(0)' }}
           >
             <div className="px-5 md:px-6 pb-5 md:pb-6">
               <p className="text-[#475569] leading-relaxed text-sm md:text-base border-t border-gray-100 pt-4">
@@ -803,8 +804,8 @@ const HomePage = () => {
     {/* ===== FOOTER CTA ===== */}
     <section className="px-4 md:px-5 pb-10 md:pb-32 bg-[#F8FAFF] text-center">
       <div className="max-w-5xl mx-auto relative overflow-hidden bg-[#020817] rounded-2xl md:rounded-[40px] p-8 md:p-20 shadow-2xl">
-        <div className="absolute -top-32 -left-32 w-[400px] h-[400px] bg-[#2563EB]/15 rounded-full blur-[120px] pointer-events-none" />
-        <div className="absolute -bottom-32 -right-32 w-[350px] h-[350px] bg-[#7C3AED]/12 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute -top-32 -left-32 w-[400px] h-[400px] bg-[#2563EB]/15 rounded-full blur-[120px] pointer-events-none" style={{ WebkitTransform: 'translateZ(0)', transform: 'translateZ(0)', willChange: 'transform' }} />
+        <div className="absolute -bottom-32 -right-32 w-[350px] h-[350px] bg-[#7C3AED]/12 rounded-full blur-[100px] pointer-events-none" style={{ WebkitTransform: 'translateZ(0)', transform: 'translateZ(0)', willChange: 'transform' }} />
         <div className="relative z-10">
           <div className="w-14 h-14 md:w-20 md:h-20 bg-gradient-to-br from-[#2563EB] to-[#7C3AED] rounded-2xl md:rounded-3xl flex items-center justify-center mx-auto mb-5 md:mb-8 shadow-[0_8px_32px_rgba(37,99,235,0.4)]">
             <MessageCircle className="w-7 h-7 md:w-10 md:h-10 text-white" strokeWidth={2} />
