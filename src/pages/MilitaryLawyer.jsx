@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   ShieldAlert, UserCheck, FileText, MoveRight,
   Landmark, ShieldCheck, ScrollText, Users, HandHeart,
-  MessageCircle, ArrowRight, CheckCircle2, Award
+  MessageCircle, ArrowRight, CheckCircle2
 } from 'lucide-react';
 
 const BOT_LINK = "https://t.me/legal_click_bot";

@@ -325,7 +325,16 @@ const MainFooter = () => (
 
 /* ======================== HOME PAGE ======================== */
 
-const HomePage = () => (
+const HomePage = () => {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(faqSchema);
+    document.head.appendChild(script);
+    return () => { document.head.removeChild(script); };
+  }, []);
+
+  return (
   <>
     {/* ===== HERO ===== */}
     <section id="home" className="relative overflow-hidden bg-[#020817]">
@@ -774,7 +783,6 @@ const HomePage = () => (
 
     {/* ===== FAQ ===== */}
     <section id="faq" className="px-4 md:px-5 py-14 md:py-32 bg-[#F8FAFF]">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-8 md:mb-16">
           <div className="section-eyebrow bg-blue-50 text-[#2563EB] mb-4 mx-auto">
@@ -820,7 +828,8 @@ const HomePage = () => (
       </div>
     </section>
   </>
-);
+  );
+};
 
 /* ======================== APP LAYOUT ======================== */
 

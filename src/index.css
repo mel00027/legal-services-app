@@ -55,9 +55,6 @@
   --spacing-unit: 0.5rem;
 }
 
-/* ── Google Fonts — Inter for Swiss precision ── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 90px;
