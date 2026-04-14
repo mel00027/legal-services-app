@@ -280,7 +280,8 @@ bot.action('accept_agreement', async (ctx) => {
 // Обробка відповідей від юристів-адмінів до клієнта (працює і в Темах, і в приватному чаті адмінів)
 bot.on('message', async (ctx, next) => {
   const adminChatId = process.env.ADMIN_CHAT_ID;
-  if (adminChatId && ctx.chat.id.toString() === adminChatId.toString()) {
+  const casesChatId = process.env.CASES_CHAT_ID || adminChatId;
+  if (casesChatId && ctx.chat.id.toString() === casesChatId.toString()) {
     if (ctx.message.new_chat_members || ctx.message.forum_topic_created || ctx.message.forum_topic_edited || ctx.message.pinned_message) return next();
 
     let clientId = null;
@@ -381,7 +382,7 @@ bot.on('message', async (ctx, next) => {
 
 // Функція для створення Топіка та передачі справи
 async function createClientTopic(ctx, clientId, clientName, category, initialMsgId) {
-  const adminChatId = process.env.ADMIN_CHAT_ID;
+  const adminChatId = process.env.CASES_CHAT_ID || process.env.ADMIN_CHAT_ID;
   if (!adminChatId) return null;
   
   let isForum = adminChatId.startsWith('-100');
@@ -404,7 +405,7 @@ async function createClientTopic(ctx, clientId, clientName, category, initialMsg
 
 // Функція відправлення стартового повідомлення в топік
 async function dispatchConsultationToTopic(ctx, clientId, clientName, category, threadId) {
-  const adminChatId = process.env.ADMIN_CHAT_ID;
+  const adminChatId = process.env.CASES_CHAT_ID || process.env.ADMIN_CHAT_ID;
   if (!adminChatId || !threadId) return;
 
   const adminMsg = `🚨 <b>Консультацію розпочато! (Оплачено)</b>\n\n` +
@@ -663,9 +664,9 @@ bot.action(/close_chat_(.+)/, async (ctx) => {
      await ctx.editMessageReplyMarkup({ inline_keyboard: [] }); 
      await ctx.reply(`🔒 Сесію закрито [${now}]. Для фізичного видалення натисніть "Видалити діалог".`, { reply_to_message_id: ctx.callbackQuery.message.message_id });
      
-     if (topicInfo.thread_id && process.env.ADMIN_CHAT_ID) {
+     if (topicInfo.thread_id && (process.env.CASES_CHAT_ID || process.env.ADMIN_CHAT_ID)) {
          try {
-            await ctx.telegram.closeForumTopic(process.env.ADMIN_CHAT_ID, topicInfo.thread_id);
+            await ctx.telegram.closeForumTopic(process.env.CASES_CHAT_ID || process.env.ADMIN_CHAT_ID, topicInfo.thread_id);
          } catch(closeErr) {
             console.log("Could not close forum topic natively:", closeErr.message);
          }
@@ -693,12 +694,12 @@ bot.action(/delete_chat_(.+)/, async (ctx) => {
   
   try {
      const topicInfo = await db.getTopic(clientId);
-     if (topicInfo && topicInfo.thread_id && process.env.ADMIN_CHAT_ID) {
+     if (topicInfo && topicInfo.thread_id && (process.env.CASES_CHAT_ID || process.env.ADMIN_CHAT_ID)) {
          try {
-            await ctx.telegram.deleteForumTopic(process.env.ADMIN_CHAT_ID, topicInfo.thread_id);
+            await ctx.telegram.deleteForumTopic(process.env.CASES_CHAT_ID || process.env.ADMIN_CHAT_ID, topicInfo.thread_id);
          } catch(delErr) {
             console.error("Could not delete forum topic natively:", delErr.message);
-            await ctx.telegram.sendMessage(process.env.ADMIN_CHAT_ID, "❌ Помилка: У бота немає прав на видалення тем (Manage Topics).");
+            await ctx.telegram.sendMessage(process.env.CASES_CHAT_ID || process.env.ADMIN_CHAT_ID, "❌ Помилка: У бота немає прав на видалення тем (Manage Topics).");
          }
      }
      await db.saveTopic(clientId, null);
@@ -906,9 +907,10 @@ bot.on(['text', 'voice', 'photo', 'document', 'video'], async (ctx) => {
   } else {
      // User has an active consultation. Forward message safely.
      const topicRow = await db.getTopic(ctx.from.id);
-     if (topicRow && topicRow.is_open === 1 && process.env.ADMIN_CHAT_ID) {
+     const casesChatId = process.env.CASES_CHAT_ID || process.env.ADMIN_CHAT_ID;
+     if (topicRow && topicRow.is_open === 1 && casesChatId) {
         try {
-          await ctx.telegram.copyMessage(process.env.ADMIN_CHAT_ID, ctx.from.id, ctx.message.message_id, { message_thread_id: topicRow.thread_id });
+          await ctx.telegram.copyMessage(casesChatId, ctx.from.id, ctx.message.message_id, { message_thread_id: topicRow.thread_id });
         } catch (e) {
           console.error("Failed to forward client message to topic", e);
           if (e.message.includes('thread not found') || e.message.includes('message context to reply is not found')) {
