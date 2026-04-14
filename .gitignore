@@ -31,3 +31,23 @@ Thumbs.db
 *.swo
 
 .vercel
+
+# Deploy scripts — credentials go in .env.deploy (never commit it)
+.env.deploy
+deploy.cjs
+deploy_pty.cjs
+check_pass.cjs
+pass_changer.cjs
+setup_vps_full.cjs
+finalize_deploy.cjs
+fix_env.cjs
+relaunch_bot.cjs
+verify_bot.cjs
+fix_bot.cjs
+check_bot_status.cjs
+diagnose_bot.cjs
+update_bot.cjs
+update_bot_force.cjs
+
+# Backup files
+src/App.backup.jsx

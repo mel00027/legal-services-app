@@ -44,7 +44,7 @@
 ## 🌐 5. Інфраструктура та Деплой (Hetzner VPS)
 - **IPv4:** `178.104.136.90`
 - **Користувач:** `root`
-- **Пароль:** `Rost27041975!`
+- **Пароль:** `[зберігається в .env.deploy — ніколи не комітити]`
 - **Архітектура на сервері:**
   - Код проекту: `/opt/legalclick`
   - База даних: `/var/data/legalclick/database.sqlite` (Конфігурація в `.env` через `DB_PATH`)
@@ -68,10 +68,10 @@
 
 ## 🔑 7. Змінні оточення (.env)
 *Файл `.env` на сервері містить:*
-- `BOT_TOKEN`: 8713961917:AAFJAnFKiZ5_j...
-- `ADMIN_CHAT_ID`: -1003704423334
+- `BOT_TOKEN`: [зберігається лише на сервері в .env — не комітити]
+- `ADMIN_CHAT_ID`: [зберігається лише на сервері в .env — не комітити]
 - `DB_PATH`: /var/data/legalclick/database.sqlite
-- `MONOBANK_API_TOKEN`: uzfzIW4psGfaOguU...
+- `MONOBANK_API_TOKEN`: [зберігається лише на сервері в .env — не комітити]
 
 ---
 

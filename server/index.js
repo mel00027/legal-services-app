@@ -28,6 +28,49 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 // Cache for deduplicating media groups (albums)
 const processedMediaGroups = new Set();
 
+// Subcategory definitions for all main categories
+const SUBCATEGORIES = {
+  military: {
+    name: 'Військове право',
+    items: [
+      { label: '🪖 Мобілізація', id: 'Мобілізація' },
+      { label: '🏥 ВЛК', id: 'ВЛК' },
+      { label: '💸 Виплати', id: 'Виплати' },
+      { label: '📝 Звільнення зі служби', id: 'Звільнення' },
+      { label: '❓ Інше', id: 'Інше' }
+    ]
+  },
+  housing: {
+    name: 'Житлові питання',
+    items: [
+      { label: '🏠 Оренда', id: 'Оренда' },
+      { label: '🔑 Купівля чи продаж', id: 'Купівля' },
+      { label: '💧 Комунальні послуги', id: 'Комунальні' },
+      { label: '👥 Сусідські спори', id: 'Сусідські' },
+      { label: '❓ Інше', id: 'Інше' }
+    ]
+  },
+  admin_offenses: {
+    name: 'Адміністративні правопорушення',
+    items: [
+      { label: '🚦 Штраф ПДД', id: 'Штраф_ПДД' },
+      { label: '📋 Адмін протокол', id: 'Протокол' },
+      { label: '⚖️ Оскарження постанови', id: 'Оскарження' },
+      { label: '❓ Інше', id: 'Інше' }
+    ]
+  },
+  other: {
+    name: 'Інше',
+    items: [
+      { label: '👔 Трудові спори', id: 'Трудові' },
+      { label: '👨‍👩‍👧 Сімейне право', id: 'Сімейне' },
+      { label: '📜 Спадщина', id: 'Спадщина' },
+      { label: '📑 Договори', id: 'Договори' },
+      { label: '❓ Інше', id: 'Інше' }
+    ]
+  }
+};
+
 // 2.2 Ізоляція сесії (Middleware)
 bot.use(async (ctx, next) => {
   // Only process isolation for private chats, ignore admin channel logic here
@@ -62,27 +105,47 @@ const getMainMenu = () => {
   ]);
 };
 
-// Шаблон запиту опису ситуації
-const getDescriptionPromptText = (cat) => `Категорія: *${cat}*
+// Шаблон запиту опису ситуації (підкатегорія-специфічний)
+const SUBCATEGORY_EXAMPLES = {
+  'ВЛК': `«Служу з 2022. Написав рапорт на звільнення за станом здоров'я, ВЛК пройшов — командир не підписує 2 місяці. Рапорт та висновок ВЛК додаю.»`,
+  'Мобілізація': `«Отримав повістку від ТЦК, але маю бронювання від роботодавця. Повістку та наказ про бронь прикріплюю.»`,
+  'Виплати': `«Загинув чоловік (ЗСУ). Хочу оформити страхову виплату та пенсію на дітей. Свідоцтво та документи є.»`,
+  'Звільнення': `«Написав рапорт на звільнення (єдиний годувальник). Командир ігнорує 3 місяці. Документи про склад сім'ї маю.»`,
+  'Оренда': `«Орендодавець відмовляється повертати депозит 15 000 грн після виїзду. Квартира в порядку. Договір та акт здачі є.»`,
+  'Купівля': `«Купив квартиру, виявив приховані дефекти — тріщини та протікає покрівля. Хочу розірвати договір або компенсацію.»`,
+  'Комунальні': `«ЖЕК нараховує борг 8 000 грн, але я платив — є квитанції. Хочу оскаржити нарахування.»`,
+  'Сусідські': `«Сусіди затопили квартиру. Є акт від ЖЕКу та фото збитків. Хочу стягнути компенсацію ремонту (~25 000 грн).»`,
+  'Штраф_ПДД': `«Отримав штраф 3 400 грн за перевищення швидкості на камеру. За кермом був не я. Хочу оскаржити.»`,
+  'Протокол': `«Склали адмін протокол за ст. 173 КУпАП. Не погоджуюсь з обставинами. Хочу знати шанси на оскарження.»`,
+  'Оскарження': `«Суд постановив штраф 1 700 грн за правопорушення, якого не вчиняв. Хочу апеляцію. Копія постанови є.»`,
+  'Трудові': `«Роботодавець не виплатив зарплату за 2 місяці (46 000 грн). Є трудовий договір та переписка.»`,
+  'Сімейне': `«Розлучаємось. Двоє дітей (5 і 8 р). Хочу знати порядок поділу майна (квартира, авто) та аліменти.»`,
+  'Спадщина': `«Помер батько. Є квартира та авто. Ми з братом — спадкоємці. Як оформити і які терміни?»`,
+  'Договори': `«Підписав договір на ремонт, підрядник взяв аванс 30 000 грн і зник. Як розірвати та повернути гроші?»`
+};
 
-Опишіть вашу ситуацію текстом. Будь ласка, вмістіть усю розповідь у одне повідомлення (якщо потрібно — прикріпіть фото документів).
+const getDescriptionPromptText = (cat) => {
+  const subcat = cat.includes(' -> ') ? cat.split(' -> ')[1] : cat;
+  const example = SUBCATEGORY_EXAMPLES[subcat] ||
+    `«Ситуація: [що трапилося]. Документи: [які є]. Мета: [що хочете досягти].»`;
+
+  return `Категорія: *${cat}*
+
+Опишіть вашу ситуацію текстом. Вмістіть усю розповідь в одне повідомлення — за потреби прикріпіть фото документів.
 
 Що варто вказати:
 ➕ що саме трапилося (коротко по суті);
-➕ чи є у вас на руках документи (договір, постанова, повістка, рапорт тощо);
-➕ якого результату ви очікуєте від юриста.
+➕ чи є документи (договір, постанова, повістка, акт тощо);
+➕ якого результату очікуєте від юриста.
 
-✅ *Так пишуть клієнти, яким ми допомагаємо швидко:*
-«Служу з лютого 2022. Написав рапорт на звільнення за станом здоров'я, ВЛК пройшов — командир не підписує вже 2 місяці. Рапорт і висновок ВЛК додаю.»
-«Отримав повістку від ТЦК, але маю бронювання від роботодавця. Повістку та наказ про бронь прикріплюю.»
-«Сусіди затопили квартиру. Є акт огляду від ЖЕКу і фото пошкоджень. Хочу стягнути компенсацію.»
+✅ *Приклад хорошого повідомлення:*
+${example}
 
-❌ *Так писати не варто — юристу доведеться уточнювати:*
-«Мені потрібна консультація.»
-«Проблема з ТЦК, що робити?»
-«Питання по документах.»
+❌ *Так не варто:*
+«Потрібна консультація.» / «Що робити?» / «Маю проблему.»
 
-Чим точніше ви опишете ситуацію одразу, тим швидше юрист візьметься за вашу справу! 👇`;
+Чим точніше опис — тим швидше юрист візьметься до роботи! 👇`;
+};
 
 // Обробка команди /start
 bot.start(async (ctx) => {
@@ -121,33 +184,30 @@ const checkAgreementAndProceed = async (ctx, categoryName) => {
 
 bot.action(/^category_(.+)/, async (ctx) => {
   const categoryId = ctx.match[1];
+  const catData = SUBCATEGORIES[categoryId];
 
-  if (categoryId === 'military') {
-    await db.saveSession(ctx.from.id, { 
-      chat_id: ctx.chat.id, 
-      status: 'awaiting_subcategory', 
-      category: 'Військове право' 
-    });
-    
-    await ctx.answerCbQuery();
-    await ctx.editMessageText(`Ви обрали: *Військове право*\n\nБудь ласка, оберіть специфіку питання, щоб ми могли залучити профільного спеціаліста:`, { 
-      parse_mode: 'Markdown',
-      ...Markup.inlineKeyboard([
-        [Markup.button.callback('🪖 Мобілізація', 'subcategory_Мобілізація'), Markup.button.callback('🏥 ВЛК', 'subcategory_ВЛК')],
-        [Markup.button.callback('💸 Виплати', 'subcategory_Виплати'), Markup.button.callback('📝 Звільнення', 'subcategory_Звільнення')],
-        [Markup.button.callback('❓ Інше', 'subcategory_Інше')]
-      ])
-    });
-    return;
+  if (!catData) return checkAgreementAndProceed(ctx, 'Інше');
+
+  await db.saveSession(ctx.from.id, {
+    chat_id: ctx.chat.id,
+    status: 'awaiting_subcategory',
+    category: catData.name
+  });
+
+  const rows = [];
+  for (let i = 0; i < catData.items.length; i += 2) {
+    const row = [Markup.button.callback(catData.items[i].label, `subcategory_${catData.items[i].id}`)];
+    if (catData.items[i + 1]) {
+      row.push(Markup.button.callback(catData.items[i + 1].label, `subcategory_${catData.items[i + 1].id}`));
+    }
+    rows.push(row);
   }
 
-  let categoryName = 'Інше';
-  switch(categoryId) {
-    case 'housing': categoryName = 'Житлові питання'; break;
-    case 'admin_offenses': categoryName = 'Адміністративні правопорушення'; break;
-  }
-
-  await checkAgreementAndProceed(ctx, categoryName);
+  await ctx.answerCbQuery();
+  await ctx.editMessageText(
+    `Ви обрали: *${catData.name}*\n\nОберіть специфіку питання, щоб ми підібрали профільного спеціаліста:`,
+    { parse_mode: 'Markdown', ...Markup.inlineKeyboard(rows) }
+  );
 });
 
 // Обробка вибору підкатегорії
@@ -220,8 +280,6 @@ bot.action('accept_agreement', async (ctx) => {
 // Обробка відповідей від юристів-адмінів до клієнта (працює і в Темах, і в приватному чаті адмінів)
 bot.on('message', async (ctx, next) => {
   const adminChatId = process.env.ADMIN_CHAT_ID;
-  console.log("MESSAGE RECEIVED:", ctx.chat?.id, adminChatId, ctx.message?.message_thread_id);
-  
   if (adminChatId && ctx.chat.id.toString() === adminChatId.toString()) {
     if (ctx.message.new_chat_members || ctx.message.forum_topic_created || ctx.message.forum_topic_edited || ctx.message.pinned_message) return next();
 
@@ -288,7 +346,10 @@ bot.on('message', async (ctx, next) => {
       const replyTo = ctx.message.reply_to_message;
       if (replyTo.text && replyTo.text.includes('[ID: ')) {
         const match = replyTo.text.match(/\[ID: (\d+)\]/);
-        if (match && match[1]) clientId = match[1];
+        if (match && match[1]) {
+          const parsed = parseInt(match[1], 10);
+          if (!isNaN(parsed) && parsed > 0) clientId = parsed;
+        }
       } else if (replyTo.forward_from && replyTo.forward_from.id) {
         clientId = replyTo.forward_from.id;
       }
@@ -386,11 +447,17 @@ async function dispatchConsultationToTopic(ctx, clientId, clientName, category, 
 
 // 2.1 Захист від критичних помилок (Race Condition Block)
 bot.action(/confirm_payment_(.+)/, async (ctx) => {
-  const clientId = parseInt(ctx.match[1]);
+  const clientId = parseInt(ctx.match[1], 10);
+  if (!clientId || clientId <= 0) return ctx.answerCbQuery("Невірний запит.", { show_alert: true });
   
   // Checking active consultation
   const session = await db.getSession(clientId);
   if (!session) return ctx.answerCbQuery("Сесію видалено або втрачено.", { show_alert: true });
+
+  // Only the lawyer who took the case can confirm payment
+  if (session.assigned_lawyer_id && parseInt(session.assigned_lawyer_id) !== ctx.from.id) {
+    return ctx.answerCbQuery("Підтвердити оплату може лише юрист, який взяв цю справу.", { show_alert: true });
+  }
 
   if (session.status === 'active_consultation') {
     // Вже взяли! Битва юристів.
@@ -440,7 +507,8 @@ bot.action(/confirm_payment_(.+)/, async (ctx) => {
 
 // Admin rejecting
 bot.action(/reject_payment_(.+)/, async (ctx) => {
-  const clientId = parseInt(ctx.match[1]);
+  const clientId = parseInt(ctx.match[1], 10);
+  if (!clientId || clientId <= 0) return ctx.answerCbQuery("Невірний запит.", { show_alert: true });
   await ctx.answerCbQuery("Оплату відхилено!");
   
   try {
@@ -459,6 +527,90 @@ bot.action(/reject_payment_(.+)/, async (ctx) => {
      );
   } catch (err) {
      console.error("Error rejecting payment", err);
+  }
+});
+
+// Юрист бере справу
+bot.action(/take_case_(.+)/, async (ctx) => {
+  const clientId = parseInt(ctx.match[1], 10);
+  if (!clientId || clientId <= 0) return ctx.answerCbQuery("Невірний запит.", { show_alert: true });
+
+  const session = await db.getSession(clientId);
+  if (!session) return ctx.answerCbQuery("Заявку не знайдено.", { show_alert: true });
+
+  if (session.status !== 'searching_lawyer') {
+    return ctx.answerCbQuery("Цю заявку вже взято або відхилено.", { show_alert: true });
+  }
+
+  // Assign lawyer and change status atomically
+  await db.saveSession(clientId, {
+    ...session,
+    status: 'awaiting_payment',
+    assigned_lawyer_id: ctx.from.id
+  });
+
+  const lawyerName = ctx.from.username ? `@${ctx.from.username}` : ctx.from.first_name;
+  await ctx.answerCbQuery("Ви взяли справу!");
+
+  // Lock CRM message
+  const originalText = ctx.callbackQuery.message.text || "";
+  await ctx.editMessageText(
+    `${originalText}\n\n✅ <b>Взяв у роботу:</b> ${lawyerName}`,
+    { parse_mode: 'HTML', reply_markup: { inline_keyboard: [] } }
+  ).catch(() => {});
+
+  // Send payment notice to client
+  const paymentLink = 'https://send.monobank.ua/4gQ4hJwczZ';
+  try {
+    await ctx.telegram.sendMessage(
+      clientId,
+      `✅ <b>Юриста знайдено!</b>\n\n` +
+      `Профільний фахівець ознайомився з вашим запитом і готовий розпочати консультацію.\n\n` +
+      `Вартість консультації: <b>1000 грн</b>.\n` +
+      `Після оплати надішліть квитанцію — і ми одразу відкриємо чат з юристом.\n\n` +
+      `🛡 <b>Гарантія:</b> Якщо юрист не зможе допомогти — повернемо кошти.`,
+      {
+        parse_mode: 'HTML',
+        ...Markup.inlineKeyboard([
+          [Markup.button.url('💳 Перейти до оплати', paymentLink)],
+          [Markup.button.callback('🧾 Надіслати квитанцію', 'send_receipt_prompt')]
+        ])
+      }
+    );
+  } catch (e) {
+    console.error("Не вдалося надіслати повідомлення клієнту", e);
+  }
+});
+
+// Юрист відхиляє справу
+bot.action(/reject_case_(.+)/, async (ctx) => {
+  const clientId = parseInt(ctx.match[1], 10);
+  if (!clientId || clientId <= 0) return ctx.answerCbQuery("Невірний запит.", { show_alert: true });
+
+  const session = await db.getSession(clientId);
+  if (!session || session.status !== 'searching_lawyer') {
+    return ctx.answerCbQuery("Заявку вже опрацьовано.", { show_alert: true });
+  }
+
+  const lawyerName = ctx.from.username ? `@${ctx.from.username}` : ctx.from.first_name;
+  await ctx.answerCbQuery("Заявку відхилено.");
+
+  // Lock CRM message
+  const originalText = ctx.callbackQuery.message.text || "";
+  await ctx.editMessageText(
+    `${originalText}\n\n❌ <b>Відхилено:</b> ${lawyerName}`,
+    { parse_mode: 'HTML', reply_markup: { inline_keyboard: [] } }
+  ).catch(() => {});
+
+  // Notify client
+  try {
+    await ctx.telegram.sendMessage(
+      clientId,
+      `На жаль, наразі немає вільного фахівця з потрібної спеціалізації.\n\n` +
+      `Ваша заявка залишається в черзі — ми повідомимо вас, щойно звільниться профільний юрист.`
+    );
+  } catch (e) {
+    console.error("Не вдалося повідомити клієнта про відхилення", e);
   }
 });
 
@@ -649,41 +801,68 @@ bot.on(['text', 'voice', 'photo', 'document', 'video'], async (ctx) => {
       return ctx.reply("Дякуємо за ваш відгук! Нам дуже приємно. 💙\n\nМожете повернутись на головну: /start");
   }
   
-  if (session && session.status === 'awaiting_description') {
-    // 2.3 Safe description recording. Just store the ID of the msg for forwarding later safely.
-    await db.saveSession(ctx.from.id, { 
-      ...session,
-      status: 'payment_selection',
-      receipt_msg_id: ctx.message.message_id 
-    });
-    
-    // Крок 1. Буфер довіри (Імітація обробки)
-    await ctx.sendChatAction('typing');
-    await delay(2000);
-    await ctx.reply(`✅ Матеріали отримано.\n\n> Система аналізує ваш запит та підбирає вільного фахівця з напрямку «${session.category}»...`, { parse_mode: 'HTML' });
-    
-    // Крок 2. Продаж цінності + Гарантія (Через 2 секунди)
-    await ctx.sendChatAction('typing');
-    await delay(2500);
-    
-    const invoiceText = `⚖️ <b>Юрист знайдений і готовий долучитися до чату!</b>
+  if (session && session.status === 'searching_lawyer') {
+    return ctx.reply('⏳ Ваш запит в обробці. Пошук профільного юриста може зайняти від 10 до 30 хвилин. Будь ласка, очікуйте — ми повідомимо вас.');
 
-Платформа LegalClick працює за принципом фіксованого «Вхідного квитка». Вартість повноцінної консультації складає 1000 грн.
-
-<b>Що ви отримуєте після оплати:</b>
-1️⃣ Прямий чат із профільним юристом без ліміту часу на розмову.
-2️⃣ Детальний аналіз вашої ситуації та надісланих документів.
-3️⃣ Чіткий алгоритм дій: що робити, куди звертатися, які є ризики.
-
-🛡 <b>Гарантія безпеки:</b> Якщо після ознайомлення з матеріалами юрист побачить, що ми нічим не можемо допомогти у вашій ситуації — ми просто закриємо сесію і повернемо вам гроші.`;
-
-    await ctx.reply(invoiceText, {
+  } else if (session && session.status === 'awaiting_payment') {
+    // Lawyer assigned but client hasn't paid yet — re-show payment button
+    const paymentLink = 'https://send.monobank.ua/4gQ4hJwczZ';
+    return ctx.reply(
+      `⚖️ <b>Юрист призначений та чекає на вас!</b>\n\nВартість консультації: <b>1000 грн</b>.\nПісля оплати надішліть квитанцію — і ми відразу відкриємо чат.`,
+      {
         parse_mode: 'HTML',
         ...Markup.inlineKeyboard([
-          [Markup.button.callback('💳 Сплатити', 'payment_direct')]
+          [Markup.button.url('💳 Перейти до оплати', paymentLink)],
+          [Markup.button.callback('🧾 Надіслати квитанцію', 'send_receipt_prompt')]
         ])
+      }
+    );
+
+  } else if (session && session.status === 'awaiting_description') {
+    // Store description message ID and notify CRM
+    await db.saveSession(ctx.from.id, {
+      ...session,
+      status: 'searching_lawyer',
+      receipt_msg_id: ctx.message.message_id
     });
-    
+
+    await ctx.sendChatAction('typing');
+    await delay(1500);
+
+    await ctx.reply(
+      `✅ <b>Запит прийнято!</b>\n\n` +
+      `🔍 Здійснюється підбір профільного юриста за напрямком «${session.category}».\n\n` +
+      `⏳ Це може зайняти від <b>10 до 30 хвилин</b>. Щойно фахівець ознайомиться з вашим запитом — ми одразу повідомимо вас.`,
+      { parse_mode: 'HTML' }
+    );
+
+    // Send to CRM group for lawyer to take
+    const adminChatId = process.env.ADMIN_CHAT_ID;
+    if (adminChatId) {
+      const clientName = ctx.from.first_name;
+      const username = ctx.from.username ? `@${ctx.from.username}` : 'без юзернейму';
+      const now = new Date().toLocaleString('uk-UA');
+      const crmText =
+        `🆕 <b>НОВА ЗАЯВКА</b>\n\n` +
+        `👤 <b>Клієнт:</b> ${clientName} (${username}) [ID: <code>${ctx.from.id}</code>]\n` +
+        `📁 <b>Категорія:</b> ${session.category}\n` +
+        `🕐 <b>Час подачі:</b> ${now}\n\n` +
+        `📋 <b>Опис ситуації — вище ↑</b>`;
+
+      try {
+        await ctx.telegram.copyMessage(adminChatId, ctx.from.id, ctx.message.message_id);
+        await ctx.telegram.sendMessage(adminChatId, crmText, {
+          parse_mode: 'HTML',
+          ...Markup.inlineKeyboard([
+            [Markup.button.callback('✅ Взяти справу', `take_case_${ctx.from.id}`)],
+            [Markup.button.callback('❌ Відхилити', `reject_case_${ctx.from.id}`)]
+          ])
+        });
+      } catch (e) {
+        console.error("Помилка відправки в CRM", e);
+      }
+    }
+
   } else if (session && session.status === 'awaiting_receipt') {
      const adminChatId = process.env.ADMIN_CHAT_ID;
      if (!ctx.message.photo && !ctx.message.document) {
@@ -694,11 +873,14 @@ bot.on(['text', 'voice', 'photo', 'document', 'video'], async (ctx) => {
      await ctx.reply("Дякуємо! Квитанцію отримано. Очікуйте на підтвердження (зазвичай це займає кілька хвилин).");
      
      if (adminChatId) {
-        const extraLabel = session.extra === 1 ? "ДОПЛАТА" : "НОВА ЗАЯВКА";
-        const adminMsg = `💰 <b>Отримана квитанція про оплату! (${extraLabel})</b>\n` +
+        const extraLabel = session.extra === 1 ? "ДОПЛАТА" : "ОПЛАТА";
+        const assignedInfo = session.assigned_lawyer_id
+          ? `\n<b>Призначений юрист:</b> ID <code>${session.assigned_lawyer_id}</code> (тільки він може підтвердити)`
+          : '';
+        const adminMsg = `💰 <b>Квитанція про оплату (${extraLabel})</b>\n` +
                          `<b>Клієнт:</b> ${ctx.from.first_name} (@${ctx.from.username || 'без_юзернейму'}) [ID: ${ctx.from.id}]\n` +
-                         `<b>Категорія:</b> ${session.category}\n\n` +
-                         `Перевірте квитанцію (нижче) та натисніть кнопку для підтвердження.`;
+                         `<b>Категорія:</b> ${session.category}${assignedInfo}\n\n` +
+                         `Перевірте квитанцію (вище) та підтвердіть оплату.`;
                          
         try {
            // Create a general alert block since topic logic happens after confirmation
@@ -715,9 +897,9 @@ bot.on(['text', 'voice', 'photo', 'document', 'video'], async (ctx) => {
            console.error("Не вдалося відправити квитанцію адміну", e);
         }
      }
-  } else if (session && (session.status === 'payment_selection' || session.status === 'pending_admin_approval')) {
+  } else if (session && (session.status === 'payment_selection' || session.status === 'pending_admin_approval' || session.status === 'awaiting_payment')) {
      if (session.status === 'pending_admin_approval') {
-        ctx.reply('Будь ласка, зачекайте підтвердження оплати адміністратором.');
+        ctx.reply('Будь ласка, зачекайте підтвердження оплати юристом.');
      } else {
         ctx.reply('Будь ласка, завершiть оплату, щоб юрист міг розпочати роботу.');
      }

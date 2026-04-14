@@ -68,9 +68,16 @@ async function initDB() {
       invoice_id TEXT,
       receipt_msg_id INTEGER,
       extra INTEGER DEFAULT 0,
-      amount INTEGER
+      amount INTEGER,
+      assigned_lawyer_id INTEGER DEFAULT NULL
     )
   `);
+
+  try {
+    await db.exec('ALTER TABLE sessions ADD COLUMN assigned_lawyer_id INTEGER DEFAULT NULL');
+  } catch (e) {
+    // Column might already exist, ignore
+  }
 
   // Table admin_states (for handling topic admin steps like extra payment)
   await db.exec(`
@@ -107,10 +114,10 @@ async function saveSession(userId, data) {
   const now = Date.now();
   await db.run(`
     INSERT INTO sessions (
-      user_id, chat_id, status, category, description_text, description_media_id, updated_at, invoice_id, receipt_msg_id, extra, amount
-    ) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ON CONFLICT(user_id) DO UPDATE SET 
+      user_id, chat_id, status, category, description_text, description_media_id, updated_at, invoice_id, receipt_msg_id, extra, amount, assigned_lawyer_id
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT(user_id) DO UPDATE SET
       chat_id = excluded.chat_id,
       status = excluded.status,
       category = excluded.category,
@@ -120,19 +127,21 @@ async function saveSession(userId, data) {
       invoice_id = excluded.invoice_id,
       receipt_msg_id = excluded.receipt_msg_id,
       extra = excluded.extra,
-      amount = excluded.amount
+      amount = excluded.amount,
+      assigned_lawyer_id = excluded.assigned_lawyer_id
   `, [
-    userId, 
-    data.chat_id || null, 
-    data.status || 'start', 
-    data.category || null, 
-    data.description_text || null, 
-    data.description_media_id || null, 
+    userId,
+    data.chat_id || null,
+    data.status || 'start',
+    data.category || null,
+    data.description_text || null,
+    data.description_media_id || null,
     now,
     data.invoice_id || null,
     data.receipt_msg_id || null,
     data.extra ? 1 : 0,
-    data.amount || null
+    data.amount || null,
+    data.assigned_lawyer_id || null
   ]);
 }
 
