@@ -703,15 +703,14 @@ const HomePage = () => {
     </section>
 
     {/* ===== REVIEWS ===== */}
-    <section className="px-4 md:px-5 py-14 md:py-28 bg-[#F8FAFF] overflow-hidden">
+    <section className="py-14 md:py-28 bg-[#F8FAFF] overflow-hidden">
       <motion.div
-        className="max-w-6xl mx-auto"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-80px' }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
-        <div className="text-center mb-10 md:mb-14">
+        <div className="text-center mb-10 md:mb-14 px-4 md:px-5">
           <div className="section-eyebrow bg-blue-50 text-[#2563EB] mb-4 mx-auto">
             <Star className="w-3.5 h-3.5 fill-[#2563EB]" /> Відгуки клієнтів
           </div>
@@ -719,7 +718,10 @@ const HomePage = () => {
           <p className="text-[#475569] mt-3 text-sm md:text-base max-w-xl mx-auto">Реальні історії людей, які вирішили свої проблеми онлайн — без черг і офісів</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div
+          className="flex gap-4 overflow-x-auto pb-4 px-4 md:px-5 snap-x snap-mandatory"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+        >
           {[
             {
               name: 'Дмитро К.',
@@ -758,13 +760,17 @@ const HomePage = () => {
               stars: 5
             },
           ].map(({ name, role, text, stars }) => (
-            <div key={name} className="bg-white rounded-2xl p-5 md:p-6 border border-gray-100 shadow-sm flex flex-col gap-4">
+            <div
+              key={name}
+              className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex flex-col gap-4 shrink-0 snap-start"
+              style={{ width: 'min(80vw, 300px)' }}
+            >
               <div className="flex items-center gap-0.5">
                 {Array.from({ length: stars }).map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-[#F59E0B] text-[#F59E0B]" />
                 ))}
               </div>
-              <p className="text-[#1E293B] text-sm md:text-[15px] leading-relaxed flex-1">«{text}»</p>
+              <p className="text-[#1E293B] text-sm leading-relaxed flex-1">«{text}»</p>
               <div className="flex items-center gap-3 pt-1 border-t border-gray-100">
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2563EB] to-[#7C3AED] flex items-center justify-center text-white font-black text-sm shrink-0">
                   {name[0]}
