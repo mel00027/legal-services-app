@@ -164,29 +164,22 @@ bot.command('getid', (ctx) => {
   ctx.reply(`ID цього чату: ${ctx.chat.id}`);
 });
 
-// Обробка вибору категорії
-const checkAgreementAndProceed = async (ctx, categoryName) => {
-  // Завжди показуємо оферту при кожному новому зверненні
-  await db.saveSession(ctx.from.id, { 
-    chat_id: ctx.chat.id, 
-    status: 'awaiting_agreement', 
-    category: categoryName 
+// Перехід одразу до опису ситуації (оферта прибрана)
+const goToDescription = async (ctx, categoryName) => {
+  await db.saveSession(ctx.from.id, {
+    chat_id: ctx.chat.id,
+    status: 'awaiting_description',
+    category: categoryName
   });
   await ctx.answerCbQuery();
-  await ctx.editMessageText(
-    "Перш ніж ми розпочнемо, ознайомтеся з умовами надання послуг. Ми працюємо офіційно та дбаємо про безпеку ваших даних.",
-    Markup.inlineKeyboard([
-      [Markup.button.callback('📄 Читати Оферту', 'read_offer')],
-      [Markup.button.callback('✅ Погоджуюсь та продовжую', 'accept_agreement')]
-    ])
-  );
+  await ctx.editMessageText(getDescriptionPromptText(categoryName), { parse_mode: 'Markdown' });
 };
 
 bot.action(/^category_(.+)/, async (ctx) => {
   const categoryId = ctx.match[1];
   const catData = SUBCATEGORIES[categoryId];
 
-  if (!catData) return checkAgreementAndProceed(ctx, 'Інше');
+  if (!catData) return goToDescription(ctx, 'Інше');
 
   await db.saveSession(ctx.from.id, {
     chat_id: ctx.chat.id,
@@ -220,62 +213,9 @@ bot.action(/subcategory_(.+)/, async (ctx) => {
    }
 
    const fullCategory = `${session.category} -> ${subcategoryName}`;
-   await checkAgreementAndProceed(ctx, fullCategory);
+   await goToDescription(ctx, fullCategory);
 });
 
-// Agreement Handlers
-bot.action('read_offer', async (ctx) => {
-  const offerText = `<b>ПУБЛІЧНА ОФЕРТА (ДОГОВІР) ПРО НАДАННЯ ЮРИДИЧНИХ ПОСЛУГ ОНЛАЙН</b>
-
-<b>1. ЗАГАЛЬНІ ПОЛОЖЕННЯ</b>
-1.1. Цей документ є офіційною пропозицією сервісу LegalClick для будь-якої особи.
-1.2. Акцептом цієї Оферти є натискання Клієнтом кнопки «Погоджуюсь з умовами» в боті.
-
-<b>2. ПРЕДМЕТ ДОГОВОРУ</b>
-2.1. Виконавець зобов’язується надати юридичні послуги (консультації, підготовка документів) дистанційно через Telegram.
-
-<b>3. ПОРЯДОК НАДАННЯ ПОСЛУГ</b>
-3.1. Клієнт обирає категорію та описує суть запиту в чаті.
-3.2. Послуга вважається наданою з моменту відправлення Виконавцем текстової консультації або документа.
-3.3. Комунікація в Telegram має юридичну силу офіційного листування.
-
-<b>4. ВАРТІСТЬ ТА ОПЛАТА</b>
-4.1. Оплата здійснюється у формі 100% передоплати за реквізитами бота.
-
-<b>5. КОНФІДЕНЦІЙНІСТЬ ТА ДАНІ</b>
-5.1. Виконавець зобов’язується не розголошувати інформацію третім особам.
-5.2. Виконавець не зберігає копії документів на фізичних серверах, використовуючи інфраструктуру Telegram.
-
-<b>6. ВІДПОВІДАЛЬНІСТЬ СТОРІН</b>
-6.1. Виконавець не несе відповідальності за судове рішення, але гарантує фахову підготовку документів.
-6.2. Клієнт несе відповідальність за достовірність документів.
-
-<b>7. ПРИПИНЕННЯ ДОГОВОРУ</b>
-7.1. Договір вважається виконаним після закриття діалогу в адмін-панелі.`;
-
-  await ctx.answerCbQuery();
-  await ctx.reply(offerText, { 
-    parse_mode: 'HTML',
-    ...Markup.inlineKeyboard([
-      [Markup.button.callback('✅ Погоджуюсь та продовжую', 'accept_agreement')]
-    ])
-  });
-});
-
-bot.action('accept_agreement', async (ctx) => {
-  await db.saveUserAgreement(ctx.from.id);
-  const session = await db.getSession(ctx.from.id);
-  if (session && session.status === 'awaiting_agreement') {
-     await db.saveSession(ctx.from.id, { 
-       ...session, 
-       status: 'awaiting_description' 
-     });
-     await ctx.answerCbQuery();
-     await ctx.editMessageText(getDescriptionPromptText(session.category), { parse_mode: 'Markdown' });
-  } else {
-     await ctx.answerCbQuery('Угода підтверджена.');
-  }
-});
 
 // Обробка відповідей від юристів-адмінів до клієнта (працює і в Темах, і в приватному чаті адмінів)
 bot.on('message', async (ctx, next) => {
