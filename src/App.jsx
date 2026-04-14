@@ -702,6 +702,84 @@ const HomePage = () => {
       </motion.div>
     </section>
 
+    {/* ===== REVIEWS ===== */}
+    <section className="px-4 md:px-5 py-14 md:py-28 bg-[#F8FAFF] overflow-hidden">
+      <motion.div
+        className="max-w-6xl mx-auto"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      >
+        <div className="text-center mb-10 md:mb-14">
+          <div className="section-eyebrow bg-blue-50 text-[#2563EB] mb-4 mx-auto">
+            <Star className="w-3.5 h-3.5 fill-[#2563EB]" /> Відгуки клієнтів
+          </div>
+          <h2 className="text-2xl md:text-5xl font-black text-[#0D1B2E] tracking-tight">Що кажуть наші клієнти</h2>
+          <p className="text-[#475569] mt-3 text-sm md:text-base max-w-xl mx-auto">Реальні історії людей, які вирішили свої проблеми онлайн — без черг і офісів</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          {[
+            {
+              name: 'Дмитро К.',
+              role: 'ветеран ЗСУ, м. Харків',
+              text: 'Звільнився зі служби і навіть не підозрював, що мені недоплатили майже 400 тисяч гривень. LegalClick самі порахували, підготували всі документи і подали до суду — я навіть жодного разу не з\'являвся особисто. Гроші отримав через 4 місяці.',
+              stars: 5
+            },
+            {
+              name: 'Олександр Т.',
+              role: 'військовослужбовець ЗСУ',
+              text: 'Проходив ВЛК, комісія спочатку відмовила у звільненні — казали "придатний". Юристи LegalClick оскаржили рішення через Telegram без жодних черг і кабінетів. Через 6 тижнів на руках законне рішення.',
+              stars: 5
+            },
+            {
+              name: 'Тетяна М.',
+              role: 'дружина мобілізованого, м. Дніпро',
+              text: 'Написала в бот пізно ввечері, вранці вже відповів юрист. Чоловіка мобілізували з порушеннями — все вирішили дистанційно. Жодного офісу, жодної нервотрепки. Дуже вдячна за людське ставлення.',
+              stars: 5
+            },
+            {
+              name: 'Ігор В.',
+              role: 'підприємець, м. Київ',
+              text: 'Чесно кажучи, не вірив що онлайн-сервіс може довести справу до суду. Але все зробили самі — я тільки підписував документи. Суперечку з контрагентом на 180 тис. грн виграли, гроші повернули.',
+              stars: 5
+            },
+            {
+              name: 'Василь Р.',
+              role: 'демобілізований, м. Запоріжжя',
+              text: 'Думав, питання з виплатами за поранення — це місяці походів по інстанціях. Виявилось два тижні листування у Telegram і все. Юристи знають військове право від і до, жодних зайвих питань.',
+              stars: 5
+            },
+            {
+              name: 'Марина С.',
+              role: 'клієнт, м. Одеса',
+              text: 'Орендодавець не повертав депозит 3 місяці. Написала в LegalClick — за тиждень юрист підготував претензію і направив запит. Без суду, без нервів, все цифрово. Депозит повернули повністю.',
+              stars: 5
+            },
+          ].map(({ name, role, text, stars }) => (
+            <div key={name} className="bg-white rounded-2xl p-5 md:p-6 border border-gray-100 shadow-sm flex flex-col gap-4">
+              <div className="flex items-center gap-0.5">
+                {Array.from({ length: stars }).map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-[#F59E0B] text-[#F59E0B]" />
+                ))}
+              </div>
+              <p className="text-[#1E293B] text-sm md:text-[15px] leading-relaxed flex-1">«{text}»</p>
+              <div className="flex items-center gap-3 pt-1 border-t border-gray-100">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2563EB] to-[#7C3AED] flex items-center justify-center text-white font-black text-sm shrink-0">
+                  {name[0]}
+                </div>
+                <div>
+                  <p className="font-bold text-[#0D1B2E] text-sm leading-tight">{name}</p>
+                  <p className="text-[#94A3B8] text-[11px] mt-0.5">{role}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    </section>
+
     {/* ===== PRICING ===== */}
     <section className="px-4 md:px-5 py-14 md:py-32 bg-[#020817] text-white relative overflow-hidden">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] md:w-[700px] h-[500px] md:h-[700px] bg-[#7C3AED]/10 rounded-full blur-[140px] pointer-events-none" />
