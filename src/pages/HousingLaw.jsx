@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import {
   FileText, Home, BadgePercent, Eraser,
   ShieldCheck, MessageCircle, ScrollText, ArrowRight, CheckCircle2
 } from 'lucide-react';
-
-const BOT_LINK = "https://t.me/legal_click_bot?start=hello";
+import { BOT_LINK_HOUSING } from '../constants';
 
 const services = [
   {
@@ -69,7 +68,7 @@ export const HousingLaw = () => {
         </div>
 
         <div className="max-w-5xl mx-auto px-5 md:px-8 flex flex-col items-center text-center relative z-10">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -88,19 +87,19 @@ export const HousingLaw = () => {
               Поновлення в черзі на житло, отримання компенсацій та повернення коштів при купівлі нерухомості. Працюємо на результат.
             </p>
 
-            <motion.a
-              href={BOT_LINK}
+            <m.a
+              href={BOT_LINK_HOUSING}
               className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl py-4 md:py-5 px-8 md:px-10 font-black text-base md:text-lg inline-flex items-center justify-center gap-3 shadow-[0_8px_32px_rgba(16,185,129,0.4)] active:scale-95 transition-transform"
               whileHover={{ scale: 1.03, boxShadow: '0 12px 40px rgba(16,185,129,0.5)' }}
               whileTap={{ scale: 0.96 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               <MessageCircle className="w-5 h-5 md:w-6 md:h-6" /> Отримати консультацію
-            </motion.a>
-          </motion.div>
+            </m.a>
+          </m.div>
 
           {/* Stats */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
@@ -112,13 +111,13 @@ export const HousingLaw = () => {
                 <div className="text-white/45 text-[11px] md:text-xs font-medium">{label}</div>
               </div>
             ))}
-          </motion.div>
+          </m.div>
         </div>
       </section>
 
       {/* ===== EXPERTISE ===== */}
       <section className="px-5 py-14 md:py-24 bg-white border-b border-gray-100">
-        <motion.div
+        <m.div
           className="max-w-4xl mx-auto text-center"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -141,12 +140,12 @@ export const HousingLaw = () => {
               </span>
             ))}
           </div>
-        </motion.div>
+        </m.div>
       </section>
 
       {/* ===== SERVICES GRID ===== */}
       <section className="px-4 md:px-5 py-14 md:py-28 bg-[#F8FAFF]">
-        <motion.div
+        <m.div
           className="max-w-5xl mx-auto"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -164,7 +163,7 @@ export const HousingLaw = () => {
             {services.map((service, index) => {
               const Icon = service.icon;
               return (
-                <motion.div
+                <m.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -177,11 +176,11 @@ export const HousingLaw = () => {
                   </div>
                   <h3 className="text-base md:text-xl font-black text-[#0D1B2E] mb-3">{service.title}</h3>
                   <p className="text-[#475569] text-sm md:text-base leading-relaxed">{service.desc}</p>
-                </motion.div>
+                </m.div>
               );
             })}
           </div>
-        </motion.div>
+        </m.div>
       </section>
 
       {/* ===== FOOTER CTA ===== */}
@@ -196,15 +195,15 @@ export const HousingLaw = () => {
             </div>
             <h2 className="text-xl md:text-5xl font-black mb-3 md:mb-6 text-white tracking-tight">Юридична підтримка —<br className="hidden md:block"/> в одному кліку</h2>
             <p className="text-sm md:text-xl text-white/50 mb-7 md:mb-10 max-w-2xl mx-auto leading-relaxed">Не відкладайте на потім. Відкрийте чат, опишіть ситуацію і отримайте план дій вже сьогодні.</p>
-            <motion.a
-              href={BOT_LINK}
+            <m.a
+              href={BOT_LINK_HOUSING}
               className="inline-flex bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-black py-4 px-8 md:py-5 md:px-12 rounded-xl md:rounded-2xl shadow-[0_8px_32px_rgba(16,185,129,0.4)] items-center justify-center gap-2 md:gap-3 text-base md:text-xl active:scale-95 transition-transform"
               whileHover={{ scale: 1.03, boxShadow: '0 12px 40px rgba(16,185,129,0.5)' }}
               whileTap={{ scale: 0.96 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               Чат з юристом <ArrowRight className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5} />
-            </motion.a>
+            </m.a>
           </div>
         </div>
       </section>

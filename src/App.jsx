@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   MessageCircle, ShieldCheck, Home,
@@ -6,9 +6,11 @@ import {
   Zap, CheckCircle2, Scale, ChevronUp,
   Star, ArrowRight, Award, Shield
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { MilitaryLawyer } from './pages/MilitaryLawyer';
-import { HousingLaw } from './pages/HousingLaw';
+import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
+import { BOT_LINK } from './constants';
+
+const MilitaryLawyer = React.lazy(() => import('./pages/MilitaryLawyer').then(mod => ({ default: mod.MilitaryLawyer })));
+const HousingLaw = React.lazy(() => import('./pages/HousingLaw').then(mod => ({ default: mod.HousingLaw })));
 
 /* ======================== DATA ======================== */
 
@@ -51,7 +53,6 @@ const faqSchema = {
   })),
 };
 
-const BOT_LINK = 'https://t.me/legal_click_bot?start=hello';
 
 /* ======================== COMPONENTS ======================== */
 
@@ -66,7 +67,7 @@ const ChatCarousel = memo(() => {
   return (
     <div className="relative overflow-hidden flex-1 min-h-0">
       <AnimatePresence mode="wait">
-        <motion.div
+        <m.div
           key={idx}
           initial={{ x: 180, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -76,7 +77,7 @@ const ChatCarousel = memo(() => {
         >
           <p className="text-[11px] leading-relaxed">{clientMessages[idx]}</p>
           <span className="text-[9px] opacity-60 block text-right mt-1">19:03</span>
-        </motion.div>
+        </m.div>
       </AnimatePresence>
       <div className="flex justify-center gap-1.5 mt-3">
         {clientMessages.map((_, i) => (
@@ -124,7 +125,7 @@ const AccordionItem = memo(({ question, answer }) => {
       </button>
       <AnimatePresence initial={false}>
         {open && (
-          <motion.div
+          <m.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -137,7 +138,7 @@ const AccordionItem = memo(({ question, answer }) => {
                 {answer}
               </p>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>
@@ -154,7 +155,7 @@ const ServiceCard = memo(({ name, icon: Icon, path, color }) => {
       : '#8B5CF6, #7C3AED';
 
   const inner = (
-    <div className="flex items-center justify-between p-5 md:p-6 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-blue-900/10 md:transition-all md:duration-300 md:hover:-translate-y-2 cursor-pointer group active:scale-[0.98] transition-transform overflow-hidden relative">
+    <div className={`flex items-center justify-between p-5 md:p-6 rounded-2xl bg-white border border-gray-100 shadow-sm overflow-hidden relative ${path ? 'hover:shadow-xl hover:shadow-blue-900/10 md:transition-all md:duration-300 md:hover:-translate-y-2 cursor-pointer group active:scale-[0.98] transition-transform' : 'cursor-default opacity-75'}`}>
       <div
         className="absolute top-0 left-0 w-full h-[3px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         style={{ backgroundImage: `linear-gradient(to right, ${gradientColors})` }}
@@ -167,11 +168,20 @@ const ServiceCard = memo(({ name, icon: Icon, path, color }) => {
         >
           <Icon className="w-5 h-5 text-white" strokeWidth={2} />
         </div>
-        <span className="font-bold text-[#0D1B2E] text-[15px] md:text-base">{name}</span>
+        <div className="flex flex-col gap-1">
+          <span className="font-bold text-[#0D1B2E] text-[15px] md:text-base">{name}</span>
+          {!path && (
+            <span className="inline-block text-[10px] font-semibold uppercase tracking-wide text-violet-600 bg-violet-50 border border-violet-100 rounded-full px-2 py-0.5 leading-none w-fit">
+              Незабаром
+            </span>
+          )}
+        </div>
       </div>
-      <div className="w-8 h-8 rounded-full bg-gray-50 group-hover:bg-blue-50 flex items-center justify-center transition-colors shrink-0">
-        <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#2563EB] transition-colors" strokeWidth={2.5} />
-      </div>
+      {path && (
+        <div className="w-8 h-8 rounded-full bg-gray-50 group-hover:bg-blue-50 flex items-center justify-center transition-colors shrink-0">
+          <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#2563EB] transition-colors" strokeWidth={2.5} />
+        </div>
+      )}
     </div>
   );
 
@@ -245,7 +255,7 @@ const NavigationHeader = () => {
           ))}
         </nav>
 
-        <motion.a
+        <m.a
           href={BOT_LINK}
           className="bg-gradient-to-r from-[#2563EB] to-[#7C3AED] text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-blue-500/25 flex items-center gap-2"
           whileHover={{ scale: 1.03 }}
@@ -253,7 +263,7 @@ const NavigationHeader = () => {
           transition={{ type: 'spring', stiffness: 400, damping: 17 }}
         >
           <MessageCircle className="w-4 h-4" /> Чат з юристом
-        </motion.a>
+        </m.a>
       </header>
     </>
   );
@@ -359,7 +369,7 @@ const HomePage = () => {
 
       <div className="max-w-7xl mx-auto px-5 md:px-8 lg:px-16 pt-12 pb-14 md:py-28 lg:py-32 flex flex-col md:flex-row items-center gap-10 md:gap-16 lg:gap-24 relative z-10">
         {/* ── Left: text ── */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -382,7 +392,7 @@ const HomePage = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-            <motion.a
+            <m.a
               href={BOT_LINK}
               className="bg-gradient-to-r from-[#2563EB] to-[#7C3AED] text-white rounded-2xl py-[18px] px-7 md:px-8 font-bold text-base md:text-lg flex items-center justify-center gap-3 shadow-[0_8px_32px_rgba(37,99,235,0.4)] active:scale-95 transition-transform"
               whileHover={{ scale: 1.03 }}
@@ -391,7 +401,7 @@ const HomePage = () => {
             >
               <MessageCircle className="w-5 h-5 md:w-6 md:h-6" />
               Отримати допомогу в чаті
-            </motion.a>
+            </m.a>
             <button
               className="hidden sm:flex border border-white/15 text-white/80 hover:border-white/30 hover:text-white rounded-2xl py-[18px] px-8 font-semibold text-lg items-center justify-center gap-2 hover:bg-white/5 transition-all"
               onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
@@ -442,10 +452,10 @@ const HomePage = () => {
               Вітаю! Опишіть вашу ситуацію текстом 👇
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* ── Right: phone mockup (desktop only) ── */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, scale: 0.92, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
@@ -483,13 +493,13 @@ const HomePage = () => {
               </div>
             </div>
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </section>
 
     {/* ===== ADVANTAGES ===== */}
     <section id="why-us" className="px-4 md:px-5 py-14 md:py-32 bg-[#F8FAFF] border-t border-gray-100 overflow-hidden">
-      <motion.div
+      <m.div
         className="max-w-7xl mx-auto"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -548,12 +558,12 @@ const HomePage = () => {
             </div>
           ))}
         </div>
-      </motion.div>
+      </m.div>
     </section>
 
     {/* ===== SERVICES ===== */}
     <section id="services" className="px-4 md:px-5 py-12 md:py-32 bg-white overflow-hidden">
-      <motion.div
+      <m.div
         className="max-w-7xl mx-auto"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -574,7 +584,7 @@ const HomePage = () => {
             <ServiceCard key={i} {...item} />
           ))}
         </div>
-      </motion.div>
+      </m.div>
     </section>
 
     {/* ===== HOW IT WORKS ===== */}
@@ -583,7 +593,7 @@ const HomePage = () => {
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#7C3AED]/10 rounded-full blur-[160px] pointer-events-none" />
 
 
-      <motion.div
+      <m.div
         className="max-w-7xl mx-auto relative z-10"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -642,12 +652,12 @@ const HomePage = () => {
             </div>
           ))}
         </div>
-      </motion.div>
+      </m.div>
     </section>
 
     {/* ===== TRUST ===== */}
     <section className="px-4 md:px-5 py-12 md:py-24 bg-white overflow-hidden">
-      <motion.div
+      <m.div
         className="max-w-6xl mx-auto"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -699,12 +709,12 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </section>
 
     {/* ===== REVIEWS ===== */}
     <section className="py-14 md:py-28 bg-[#F8FAFF] overflow-hidden">
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-80px' }}
@@ -783,7 +793,7 @@ const HomePage = () => {
             </div>
           ))}
         </div>
-      </motion.div>
+      </m.div>
     </section>
 
     {/* ===== PRICING ===== */}
@@ -846,7 +856,7 @@ const HomePage = () => {
               Якщо знадобиться складання позовів чи супровід — фіксована ціна ДО початку роботи. Рішення завжди за вами.
             </p>
 
-            <motion.a
+            <m.a
               href={BOT_LINK}
               className="w-full bg-gradient-to-r from-[#2563EB] to-[#7C3AED] text-white font-black py-4 md:py-5 px-6 rounded-xl md:rounded-2xl shadow-[0_8px_32px_rgba(37,99,235,0.4)] flex items-center justify-center gap-2 md:gap-3 text-base md:text-xl active:scale-95 transition-transform"
               whileHover={{ scale: 1.02 }}
@@ -854,7 +864,7 @@ const HomePage = () => {
               transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             >
               Почати <ArrowRight className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5} />
-            </motion.a>
+            </m.a>
           </div>
         </div>
       </div>
@@ -894,7 +904,7 @@ const HomePage = () => {
           <p className="text-sm md:text-xl text-white/50 mb-7 md:mb-10 max-w-2xl mx-auto leading-relaxed">
             Не відкладайте на потім. Відкрийте чат, опишіть ситуацію і отримайте план дій вже сьогодні.
           </p>
-          <motion.a
+          <m.a
             href={BOT_LINK}
             className="inline-flex bg-gradient-to-r from-[#2563EB] to-[#7C3AED] text-white font-black py-4 px-8 md:py-5 md:px-12 rounded-xl md:rounded-2xl shadow-[0_8px_32px_rgba(37,99,235,0.45)] items-center justify-center gap-2 md:gap-3 text-base md:text-xl active:scale-95 transition-transform"
             whileHover={{ scale: 1.03 }}
@@ -902,7 +912,7 @@ const HomePage = () => {
             transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           >
             Чат з юристом <ArrowRight className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5} />
-          </motion.a>
+          </m.a>
         </div>
       </div>
     </section>
@@ -940,11 +950,13 @@ const AppLayout = () => {
     <div className="min-h-screen text-[#0D1B2E] font-sans overflow-x-hidden pt-[56px] md:pt-[72px] pb-[72px] md:pb-0">
       <NavigationHeader />
       <main className="w-full">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/military-lawyer" element={<MilitaryLawyer />} />
-          <Route path="/housing-law" element={<HousingLaw />} />
-        </Routes>
+        <Suspense fallback={<div className="min-h-screen" />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/military-lawyer" element={<MilitaryLawyer />} />
+            <Route path="/housing-law" element={<HousingLaw />} />
+          </Routes>
+        </Suspense>
       </main>
       <MobileBottomBar activeTab={activeTab} setActiveTab={setActiveTab} />
       <MainFooter />
@@ -954,8 +966,10 @@ const AppLayout = () => {
 
 export default function App() {
   return (
-    <Router>
-      <AppLayout />
-    </Router>
+    <LazyMotion features={domAnimation}>
+      <Router>
+        <AppLayout />
+      </Router>
+    </LazyMotion>
   );
 }
