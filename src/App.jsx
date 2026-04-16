@@ -8,7 +8,6 @@ import {
 } from 'lucide-react';
 import { LazyMotion, domAnimation, m, AnimatePresence } from 'framer-motion';
 import { BOT_LINK } from './constants';
-import { ThemisBackground } from './components/ThemisBackground';
 
 const MilitaryLawyer = React.lazy(() => import('./pages/MilitaryLawyer').then(mod => ({ default: mod.MilitaryLawyer })));
 const HousingLaw = React.lazy(() => import('./pages/HousingLaw').then(mod => ({ default: mod.HousingLaw })));
@@ -367,9 +366,6 @@ const HomePage = () => {
           }}
         />
       </div>
-
-      {/* Animated Themis silhouette — sits behind content */}
-      <ThemisBackground side="left" offsetX={-80} width={460} opacity={0.22} material="marble" swaySpeed={14} />
 
       <div className="max-w-7xl mx-auto px-5 md:px-8 lg:px-16 pt-12 pb-14 md:py-28 lg:py-32 flex flex-col md:flex-row items-center gap-10 md:gap-16 lg:gap-24 relative z-10">
         {/* ── Left: text ── */}
