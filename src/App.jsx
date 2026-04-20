@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   MessageCircle, ShieldCheck, Home,
@@ -7,8 +7,24 @@ import {
   Star, ArrowRight, Award, Shield
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MilitaryLawyer } from './pages/MilitaryLawyer';
-import { HousingLaw } from './pages/HousingLaw';
+
+const MilitaryLawyer = lazy(() =>
+  import('./pages/MilitaryLawyer').then((m) => ({ default: m.MilitaryLawyer }))
+);
+const HousingLaw = lazy(() =>
+  import('./pages/HousingLaw').then((m) => ({ default: m.HousingLaw }))
+);
+const AdministrativeOffences = lazy(() =>
+  import('./pages/AdministrativeOffences').then((m) => ({
+    default: m.AdministrativeOffences,
+  }))
+);
+
+const PageFallback = () => (
+  <div className="min-h-[60vh] flex items-center justify-center bg-[#020817]">
+    <div className="w-10 h-10 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
+  </div>
+);
 
 /* ======================== DATA ======================== */
 
@@ -38,7 +54,7 @@ const faqData = [
 const serviceItems = [
   { name: 'Захист прав військовослужбовців', icon: ShieldCheck, path: '/military-lawyer', color: 'from-blue-600 to-indigo-600' },
   { name: 'Житлове право', icon: Home, path: '/housing-law', color: 'from-emerald-500 to-teal-600' },
-  { name: 'Адміністративні правопорушення', icon: Scale, color: 'from-violet-500 to-purple-600' },
+  { name: 'Адміністративні правопорушення', icon: Scale, path: '/administrative-offences', color: 'from-violet-500 to-purple-600' },
 ];
 
 const faqSchema = {
@@ -344,8 +360,58 @@ const HomePage = () => {
       {/* Ambient blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-32 -left-24 w-[500px] h-[500px] bg-[#2563EB]/25 rounded-full blur-[130px]" />
-        <div className="absolute -bottom-32 -right-16 w-[450px] h-[450px] bg-[#7C3AED]/20 rounded-full blur-[120px]" />
+        <motion.div
+          aria-hidden="true"
+          className="absolute -bottom-36 -right-20 w-[540px] h-[540px] rounded-full blur-[130px] pointer-events-none"
+          animate={{
+            backgroundColor: [
+              'rgba(124,58,237,0.22)',
+              'rgba(59,130,246,0.24)',
+              'rgba(109,40,217,0.22)',
+              'rgba(124,58,237,0.22)',
+            ],
+            scale: [1, 1.06, 1.03, 1],
+            opacity: [0.85, 1, 0.9, 0.85],
+          }}
+          transition={{
+            duration: 20,
+            ease: 'easeInOut',
+            repeat: Infinity,
+          }}
+        />
         <div className="absolute top-1/2 left-1/3 w-[280px] h-[280px] bg-[#1D4ED8]/15 rounded-full blur-[100px] -translate-y-1/2" />
+
+        {/* Desktop-only ambient video — large, with stacked vignette that kills edges into site bg */}
+        <div className="hidden md:block absolute top-1/2 -left-80 lg:-left-[28rem] xl:-left-[34rem] -translate-y-1/2 w-[1100px] lg:w-[1350px] xl:w-[1550px] aspect-video pointer-events-none">
+          <video
+            className="absolute inset-0 w-full h-full object-cover select-none"
+            style={{
+              WebkitMaskImage:
+                'radial-gradient(ellipse at 50% 50%, #000 25%, rgba(0,0,0,0.4) 55%, transparent 78%)',
+              maskImage:
+                'radial-gradient(ellipse at 50% 50%, #000 25%, rgba(0,0,0,0.4) 55%, transparent 78%)',
+              filter: 'saturate(1.1) contrast(1.08) brightness(0.95)',
+              mixBlendMode: 'screen',
+            }}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+          >
+            <source src="/hero-bg.mp4" type="video/mp4" />
+          </video>
+          {/* Vignette overlay in site-bg color — seals video edges into background */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'radial-gradient(ellipse at 50% 50%, transparent 18%, rgba(2,8,23,0.7) 48%, #020817 75%)',
+            }}
+          />
+        </div>
+
         {/* Subtle grid */}
         <div
           className="absolute inset-0 opacity-[0.025]"
@@ -398,30 +464,6 @@ const HomePage = () => {
             >
               Як це працює <ArrowRight className="w-5 h-5" />
             </button>
-          </div>
-
-          {/* Social proof */}
-          <div className="flex items-center gap-4 mt-8 justify-center md:justify-start">
-            <div className="flex -space-x-2">
-              {['#2563EB', '#7C3AED', '#0D9488', '#D97706'].map((c, i) => (
-                <div
-                  key={i}
-                  className="w-8 h-8 rounded-full border-2 border-[#020817] flex items-center justify-center text-white text-[10px] font-bold"
-                  style={{ backgroundColor: c }}
-                >
-                  {['М', 'О', 'В', 'Т'][i]}
-                </div>
-              ))}
-            </div>
-            <div>
-              <div className="flex items-center gap-0.5">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="w-3.5 h-3.5 fill-[#F59E0B] text-[#F59E0B]" />
-                ))}
-                <span className="text-white font-bold text-sm ml-1">4.9</span>
-              </div>
-              <p className="text-white/45 text-[11px]">5,000+ вирішених справ</p>
-            </div>
           </div>
 
           {/* ── Mobile chat preview (inline, not absolute) ── */}
@@ -663,7 +705,7 @@ const HomePage = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-10 md:mb-16">
           {[
-            { value: '5,000+', label: 'Вирішених справ' },
+            { value: '500+', label: 'Вирішених справ' },
             { value: '4.9', label: 'Рейтинг платформи' },
             { value: '20-30 хв', label: 'Час першої відповіді' },
             { value: '100%', label: 'Онлайн без черги' },
@@ -940,11 +982,14 @@ const AppLayout = () => {
     <div className="min-h-screen text-[#0D1B2E] font-sans overflow-x-hidden pt-[56px] md:pt-[72px] pb-[72px] md:pb-0">
       <NavigationHeader />
       <main className="w-full">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/military-lawyer" element={<MilitaryLawyer />} />
-          <Route path="/housing-law" element={<HousingLaw />} />
-        </Routes>
+        <Suspense fallback={<PageFallback />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/military-lawyer" element={<MilitaryLawyer />} />
+            <Route path="/housing-law" element={<HousingLaw />} />
+            <Route path="/administrative-offences" element={<AdministrativeOffences />} />
+          </Routes>
+        </Suspense>
       </main>
       <MobileBottomBar activeTab={activeTab} setActiveTab={setActiveTab} />
       <MainFooter />

@@ -61,7 +61,7 @@ const services = [
 ];
 
 const stats = [
-  { value: '2,800+', label: 'Справ військових' },
+  { value: '350+', label: 'Справ військових' },
   { value: '94%', label: 'Успішних рішень' },
   { value: '20-30 хв', label: 'Час відповіді' },
   { value: '100%', label: 'Онлайн' },
@@ -152,15 +152,6 @@ export const MilitaryLawyer = () => {
           <p className="text-[#475569] text-base md:text-xl leading-relaxed max-w-3xl mx-auto">
             Ми говоримо з вами зрозумілою людяною мовою, проте досконало знаємо всі тонкощі армійських статутів, бюрократичних процедур та законів України. Не витрачайте час на спроби самостійно розібратися у складнощах системи — довірте це професіоналам.
           </p>
-
-          {/* Guarantee pills */}
-          <div className="flex flex-wrap justify-center gap-3 mt-8">
-            {['Сертифіковані адвокати', 'NDA з кожним юристом', 'Результат або повернення', '100% онлайн'].map(t => (
-              <span key={t} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-50 text-[#2563EB] text-sm font-semibold">
-                <CheckCircle2 className="w-3.5 h-3.5" strokeWidth={2.5} /> {t}
-              </span>
-            ))}
-          </div>
         </motion.div>
       </section>
 

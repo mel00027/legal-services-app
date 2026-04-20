@@ -51,3 +51,12 @@ update_bot_force.cjs
 
 # Backup files
 src/App.backup.jsx
+
+# Sensitive server data and deploy keys
+server/topics.json
+deploy_key.pub
+deploy_key
+
+# Claude Code / claude-flow local state
+.claude/
+.claude-flow/
