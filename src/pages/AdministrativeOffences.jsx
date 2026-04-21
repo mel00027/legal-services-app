@@ -121,7 +121,7 @@ export const AdministrativeOffences = () => {
           <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-violet-500/20">
             <Scale className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-2xl md:text-5xl font-black mb-6 text-[#0D1B2E] tracking-tight">Захіст у адмін. справах</h2>
+          <h2 className="text-2xl md:text-5xl font-black mb-6 text-[#0D1B2E] tracking-tight">Захист у адміністративних справах</h2>
           <p className="text-[#475569] text-base md:text-xl leading-relaxed max-w-3xl mx-auto">
             Штраф ПДР, позбавлення прав, протокол поліції, неправомірні дії посадовця — все це адміністративні справи з жорсткими строками. Пропустили 10 днів на оскарження — постанова набуде чинності. Ми складемо скаргу, зберемо докази та представимо ваші інтереси у суді.
           </p>

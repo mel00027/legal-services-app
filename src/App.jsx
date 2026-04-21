@@ -19,6 +19,9 @@ const AdministrativeOffences = lazy(() =>
     default: m.AdministrativeOffences,
   }))
 );
+const NotFound = lazy(() =>
+  import('./pages/NotFound').then((m) => ({ default: m.NotFound }))
+);
 
 const PageFallback = () => (
   <div className="min-h-[60vh] flex items-center justify-center bg-[#020817]">
@@ -988,6 +991,7 @@ const AppLayout = () => {
             <Route path="/military-lawyer" element={<MilitaryLawyer />} />
             <Route path="/housing-law" element={<HousingLaw />} />
             <Route path="/administrative-offences" element={<AdministrativeOffences />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </main>
