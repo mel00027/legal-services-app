@@ -25,6 +25,33 @@ const bot = new Telegraf(token);
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
+// Simple in-memory rate limiter: 20 messages per 60 seconds per user
+const rateLimitMap = new Map();
+const RATE_LIMIT_MAX = 20;
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+
+function isRateLimited(userId) {
+  const now = Date.now();
+  const entry = rateLimitMap.get(userId);
+  if (!entry || now >= entry.resetAt) {
+    rateLimitMap.set(userId, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  entry.count += 1;
+  if (entry.count > RATE_LIMIT_MAX) {
+    return true;
+  }
+  return false;
+}
+
+// Periodically clean up expired rate limit entries
+setInterval(() => {
+  const now = Date.now();
+  for (const [userId, entry] of rateLimitMap.entries()) {
+    if (now >= entry.resetAt) rateLimitMap.delete(userId);
+  }
+}, RATE_LIMIT_WINDOW_MS);
+
 // Cache for deduplicating media groups (albums)
 const processedMediaGroups = new Set();
 
@@ -280,6 +307,14 @@ bot.action(/^service_type_(plan|support|document)$/, async (ctx) => {
 
 // Обробка відповідей від юристів-адмінів до клієнта (працює і в Темах, і в приватному чаті адмінів)
 bot.on('message', async (ctx, next) => {
+  if (ctx.message?.text?.length > 4000) {
+    await ctx.reply('Повідомлення занадто довге. Будь ласка, скоротіть текст.');
+    return;
+  }
+  if (ctx.from && isRateLimited(ctx.from.id)) {
+    await ctx.reply('Ви надсилаєте повідомлення надто часто. Будь ласка, зачекайте хвилину.');
+    return;
+  }
   const adminChatId = process.env.ADMIN_CHAT_ID;
   const casesChatId = process.env.CASES_CHAT_ID || adminChatId;
   if (casesChatId && ctx.chat.id.toString() === casesChatId.toString()) {
@@ -311,7 +346,7 @@ bot.on('message', async (ctx, next) => {
             });
           }
           
-          const paymentLink = 'https://send.monobank.ua/4gQ4hJwczZ';
+          const paymentLink = process.env.MONOBANK_PAYMENT_LINK;
           await ctx.reply(`✅ Рахунок на ${amount} грн успішно сформовано та надіслано клієнту.`);
           
           try {
@@ -562,7 +597,7 @@ bot.action(/take_case_(.+)/, async (ctx) => {
   ).catch(() => {});
 
   // Send payment notice to client
-  const paymentLink = 'https://send.monobank.ua/4gQ4hJwczZ';
+  const paymentLink = process.env.MONOBANK_PAYMENT_LINK;
   try {
     await ctx.telegram.sendMessage(
       clientId,
@@ -604,12 +639,15 @@ bot.action(/reject_case_(.+)/, async (ctx) => {
     { parse_mode: 'HTML', reply_markup: { inline_keyboard: [] } }
   ).catch(() => {});
 
-  // Notify client
+  // End the client's session so they don't stay stuck in "searching_lawyer"
+  await db.deleteSession(clientId);
+
+  // Notify client that the request is closed
   try {
     await ctx.telegram.sendMessage(
       clientId,
-      `На жаль, наразі немає вільного фахівця з потрібної спеціалізації.\n\n` +
-      `Ваша заявка залишається в черзі — ми повідомимо вас, щойно звільниться профільний юрист.`
+      `😔 На жаль, наразі немає вільного фахівця з потрібної спеціалізації.\n\n` +
+      `Вашу заявку закрито. Ви можете подати новий запит у будь-який час — натисніть /start.`
     );
   } catch (e) {
     console.error("Не вдалося повідомити клієнта про відхилення", e);
@@ -716,7 +754,7 @@ bot.action('payment_direct', async (ctx) => {
   
   await ctx.answerCbQuery();
   
-  const paymentLink = 'https://send.monobank.ua/4gQ4hJwczZ';
+  const paymentLink = process.env.MONOBANK_PAYMENT_LINK;
   await db.updateSessionStatus(ctx.from.id, 'payment_selection');
   
   await ctx.editMessageText(
@@ -753,7 +791,7 @@ bot.action('go_back_to_payment', async (ctx) => {
    
    await db.updateSessionStatus(ctx.from.id, 'payment_selection');
    
-   const paymentLink = 'https://send.monobank.ua/4gQ4hJwczZ';
+   const paymentLink = process.env.MONOBANK_PAYMENT_LINK;
    let msg = `До сплати: *1000 грн*. Ваша заявка готова до передачі юристу.\n\nПісля успішної оплати обов'язково завантажте квитанцію.`;
    if (session.extra) {
       const amount = session.amount || 1000;
@@ -774,6 +812,10 @@ bot.action('go_back_to_payment', async (ctx) => {
 
 // Обробка текстових та мультимедійних повідомлень від клієнтів (The main funnel stream)
 bot.on(['text', 'voice', 'photo', 'document', 'video'], async (ctx) => {
+  if (ctx.message?.text?.length > 4000) {
+    await ctx.reply('Повідомлення занадто довге. Будь ласка, скоротіть текст.');
+    return;
+  }
   // If it's a media group, dedup.
   if (ctx.message.media_group_id) {
      if (processedMediaGroups.has(ctx.message.media_group_id)) {
@@ -808,7 +850,7 @@ bot.on(['text', 'voice', 'photo', 'document', 'video'], async (ctx) => {
 
   } else if (session && session.status === 'awaiting_payment') {
     // Lawyer assigned but client hasn't paid yet — re-show payment button
-    const paymentLink = 'https://send.monobank.ua/4gQ4hJwczZ';
+    const paymentLink = process.env.MONOBANK_PAYMENT_LINK;
     return ctx.reply(
       `⚖️ <b>Юрист призначений та чекає на вас!</b>\n\nВартість консультації: <b>1000 грн</b>.\nПісля оплати надішліть квитанцію — і ми відразу відкриємо чат.`,
       {
