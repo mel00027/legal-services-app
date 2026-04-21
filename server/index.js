@@ -117,9 +117,34 @@ const getMainMenu = () => {
   return Markup.inlineKeyboard([
     [Markup.button.callback('🛡 Військове право', 'category_military')],
     [Markup.button.callback('🏠 Житлове право', 'category_housing')],
-    [Markup.button.callback('⚖️ Адмін. правопорушення', 'category_admin_offenses')]
+    [Markup.button.callback('⚖️ Адмін. правопорушення', 'category_admin_offenses')],
+    [Markup.button.callback('❓ Типові запитання (FAQ)', 'show_faq')]
   ]);
 };
+
+// FAQ content — mirrors the website FAQ section
+const FAQ_ITEMS = [
+  {
+    q: 'Хто саме буде займатися моєю справою?',
+    a: 'З вами працюватиме вузькопрофільний фахівець. Ми не передаємо справи юристам-«універсалам». Щойно ви опишете свою ситуацію, ми уважно її вивчимо та підберемо з нашої команди саме того адвоката, який має найбільший досвід у таких питаннях.'
+  },
+  {
+    q: 'Чи можете ви представляти мене в суді?',
+    a: 'Звісно. Більше того, вам взагалі не доведеться витрачати час на походи на засідання. Наш адвокат захищатиме ваші інтереси дистанційно через офіційну систему «Електронний суд». Якщо ж ситуація вимагатиме особистої присутності в залі, ми просто залучимо до справи нашого колегу з вашого міста.'
+  },
+  {
+    q: 'А що, якщо мою проблему неможливо вирішити?',
+    a: 'Ми беремося лише за ті справи, де реально бачимо законні шляхи вирішення. Якщо об\'єктивно шансів на успіх мало, ми прямо і чесно попередимо вас про це до консультації, щоб не витрачати ваш час та гроші даремно.'
+  },
+  {
+    q: 'Як швидко я отримаю допомогу?',
+    a: 'Терміни залежать від того, яка саме допомога потрібна у вашій ситуації:\n• <b>Покроковий план дій</b> — орієнтовно за 1–2 дні.\n• <b>Складання документа чи позову</b> — від 3 днів, залежно від складності питання.\n• <b>Повний супровід</b> — наш юрист буде з вами на кожному етапі справи: від побудови плану до фінального результату.'
+  }
+];
+
+const getFaqText = () =>
+  '<b>❓ Типові запитання</b>\n\n' +
+  FAQ_ITEMS.map((item, i) => `<b>${i + 1}. ${item.q}</b>\n${item.a}`).join('\n\n');
 
 // Шаблон запиту опису ситуації (підкатегорія-специфічний)
 const SUBCATEGORY_EXAMPLES = {
@@ -193,6 +218,38 @@ bot.start(async (ctx) => {
 // Допоміжна команда для того, щоб дізнатись ID групи
 bot.command('getid', (ctx) => {
   ctx.reply(`ID цього чату: ${ctx.chat.id}`);
+});
+
+// FAQ command + callback from main menu
+const sendFaq = async (ctx, { edit = false } = {}) => {
+  const reply_markup = {
+    inline_keyboard: [[{ text: '⬅️ Назад у меню', callback_data: 'back_to_menu' }]]
+  };
+  if (edit && ctx.callbackQuery) {
+    await ctx.editMessageText(getFaqText(), { parse_mode: 'HTML', reply_markup });
+  } else {
+    await ctx.reply(getFaqText(), { parse_mode: 'HTML', reply_markup });
+  }
+};
+
+bot.command('faq', async (ctx) => {
+  await sendFaq(ctx);
+});
+
+bot.action('show_faq', async (ctx) => {
+  await ctx.answerCbQuery();
+  await sendFaq(ctx, { edit: true });
+});
+
+bot.action('back_to_menu', async (ctx) => {
+  await ctx.answerCbQuery();
+  await ctx.editMessageText(
+    `Оберіть категорію вашого питання:\n\n` +
+    `🛡 *Захист прав військовослужбовців* — ВЛК, мобілізація, виплати, звільнення\n` +
+    `🏠 *Житлове право* — квартирний облік, компенсація за житло\n` +
+    `⚖️ *Адміністративні правопорушення* — дорожній рух, оскарження постанов, військові адмін. справи`,
+    { parse_mode: 'Markdown', ...getMainMenu() }
+  );
 });
 
 // Перехід одразу до опису ситуації (оферта прибрана)
