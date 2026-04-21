@@ -243,6 +243,8 @@ bot.action('show_faq', async (ctx) => {
 
 bot.action('back_to_menu', async (ctx) => {
   await ctx.answerCbQuery();
+  // Clear any in-progress session so next action starts fresh
+  await db.deleteSession(ctx.from.id);
   await ctx.editMessageText(
     `Оберіть категорію вашого питання:\n\n` +
     `🛡 *Захист прав військовослужбовців* — ВЛК, мобілізація, виплати, звільнення\n` +
@@ -252,21 +254,14 @@ bot.action('back_to_menu', async (ctx) => {
   );
 });
 
-// Перехід одразу до опису ситуації (оферта прибрана)
-const goToDescription = async (ctx, categoryName) => {
-  await db.saveSession(ctx.from.id, {
-    chat_id: ctx.chat.id,
-    status: 'awaiting_description',
-    category: categoryName
-  });
-  await ctx.answerCbQuery();
-  await ctx.editMessageText(getDescriptionPromptText(categoryName), { parse_mode: 'Markdown' });
-};
+// Reverse lookup: category display name -> categoryId (for back navigation)
+const CAT_ID_BY_NAME = Object.fromEntries(
+  Object.entries(SUBCATEGORIES).map(([id, data]) => [data.name, id])
+);
 
-bot.action(/^category_(.+)/, async (ctx) => {
-  const categoryId = ctx.match[1];
+// Render subcategory screen (used by category pick + back navigation)
+const showSubcategoryScreen = async (ctx, categoryId) => {
   const catData = SUBCATEGORIES[categoryId];
-
   if (!catData) return goToDescription(ctx, 'Інше');
 
   await db.saveSession(ctx.from.id, {
@@ -283,25 +278,76 @@ bot.action(/^category_(.+)/, async (ctx) => {
     }
     rows.push(row);
   }
+  rows.push([Markup.button.callback('⬅️ Назад у меню', 'back_to_menu')]);
 
-  await ctx.answerCbQuery();
   await ctx.editMessageText(
     `Ви обрали: *${catData.name}*\n\nОберіть специфіку питання, щоб ми підібрали профільного спеціаліста:`,
     { parse_mode: 'Markdown', ...Markup.inlineKeyboard(rows) }
   );
+};
+
+// Перехід одразу до опису ситуації (оферта прибрана)
+const goToDescription = async (ctx, categoryName, backCallback = 'back_to_menu') => {
+  await db.saveSession(ctx.from.id, {
+    chat_id: ctx.chat.id,
+    status: 'awaiting_description',
+    category: categoryName
+  });
+  await ctx.editMessageText(getDescriptionPromptText(categoryName), {
+    parse_mode: 'Markdown',
+    reply_markup: { inline_keyboard: [[{ text: '⬅️ Назад', callback_data: backCallback }]] }
+  });
+};
+
+bot.action(/^category_(.+)/, async (ctx) => {
+  const categoryId = ctx.match[1];
+  await ctx.answerCbQuery();
+  if (!SUBCATEGORIES[categoryId]) return goToDescription(ctx, 'Інше');
+  await showSubcategoryScreen(ctx, categoryId);
+});
+
+bot.action(/^back_to_sub_(.+)/, async (ctx) => {
+  await ctx.answerCbQuery();
+  await showSubcategoryScreen(ctx, ctx.match[1]);
 });
 
 // Обробка вибору підкатегорії
 bot.action(/subcategory_(.+)/, async (ctx) => {
    const subcategoryName = ctx.match[1];
    const session = await db.getSession(ctx.from.id);
-   
+
    if (!session || session.status !== 'awaiting_subcategory') {
       return ctx.answerCbQuery('Заявка не знайдена. Почніть з /start');
    }
 
+   await ctx.answerCbQuery();
    const fullCategory = `${session.category} -> ${subcategoryName}`;
-   await goToDescription(ctx, fullCategory);
+   const parentId = CAT_ID_BY_NAME[session.category];
+   const backCallback = parentId ? `back_to_sub_${parentId}` : 'back_to_menu';
+   await goToDescription(ctx, fullCategory, backCallback);
+});
+
+// Back from service-type screen: let user re-send description
+bot.action('back_to_description', async (ctx) => {
+  const session = await db.getSession(ctx.from.id);
+  if (!session || !session.category) {
+    return ctx.answerCbQuery('Заявка не знайдена. Почніть з /start');
+  }
+  await ctx.answerCbQuery();
+  await db.saveSession(ctx.from.id, {
+    ...session,
+    status: 'awaiting_description',
+    receipt_msg_id: null
+  });
+  const parentName = session.category.includes(' -> ')
+    ? session.category.split(' -> ')[0]
+    : session.category;
+  const parentId = CAT_ID_BY_NAME[parentName];
+  const backCallback = parentId ? `back_to_sub_${parentId}` : 'back_to_menu';
+  await ctx.editMessageText(getDescriptionPromptText(session.category), {
+    parse_mode: 'Markdown',
+    reply_markup: { inline_keyboard: [[{ text: '⬅️ Назад', callback_data: backCallback }]] }
+  });
 });
 
 // Обробка вибору типу послуги після опису ситуації
@@ -935,7 +981,8 @@ bot.on(['text', 'voice', 'photo', 'document', 'video'], async (ctx) => {
         ...Markup.inlineKeyboard([
           [Markup.button.callback('📋 Покроковий план дій', 'service_type_plan')],
           [Markup.button.callback('🤝 Супровід на всіх етапах', 'service_type_support')],
-          [Markup.button.callback('📝 Скласти документ / позов', 'service_type_document')]
+          [Markup.button.callback('📝 Скласти документ / позов', 'service_type_document')],
+          [Markup.button.callback('⬅️ Назад (змінити опис)', 'back_to_description')]
         ])
       }
     );
