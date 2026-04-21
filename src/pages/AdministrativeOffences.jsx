@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Car, FileX, Building2,
+  Car, FileX, Building2, ShieldAlert,
   Scale, MessageCircle, ArrowRight
 } from 'lucide-react';
 
@@ -28,6 +28,13 @@ const services = [
     icon: Building2,
     color: "from-indigo-500 to-violet-600",
     shadow: "shadow-indigo-500/20"
+  },
+  {
+    title: "Військові адміністративні правопорушення",
+    desc: "Порушення правил військового обліку, штрафи ТЦК, оскарження адміністративних протоколів щодо мобілізації та проходження служби.",
+    icon: ShieldAlert,
+    color: "from-blue-500 to-indigo-600",
+    shadow: "shadow-blue-500/20"
   }
 ];
 
@@ -144,7 +151,7 @@ export const AdministrativeOffences = () => {
             <h2 className="text-2xl md:text-5xl font-black text-[#0D1B2E] tracking-tight">Наші послуги</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
             {services.map((service, index) => {
               const Icon = service.icon;
               return (
