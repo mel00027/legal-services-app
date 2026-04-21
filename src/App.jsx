@@ -336,8 +336,12 @@ const MainFooter = () => (
           Legal<span className="text-[#2563EB]">Click</span>
         </span>
       </Link>
-      <div className="flex gap-8 text-sm">
-        <Link to="/military-lawyer" className="hover:text-white transition-colors">Захист військових</Link>
+      <div className="flex gap-6 lg:gap-8 text-sm">
+        {serviceItems.map((item) => (
+          <Link key={item.path} to={item.path} className="hover:text-white transition-colors">
+            {item.name}
+          </Link>
+        ))}
         <a href="/#faq" className="hover:text-white transition-colors">FAQ</a>
       </div>
       <p className="text-sm">© {new Date().getFullYear()} LegalClick. Всі права захищені.</p>
