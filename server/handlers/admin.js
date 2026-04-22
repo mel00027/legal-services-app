@@ -19,6 +19,7 @@ const { isRateLimited } = require('../rateLimit');
 
 const RE_TAKE = /^take_case_(\d+)$/;
 const RE_REJECT_CASE = /^reject_case_(\d+)$/;
+const RE_REJECT_UNSOLVABLE = /^reject_unsolv_(\d+)$/;
 const RE_CONFIRM = /^confirm_payment_(\d+)$/;
 const RE_REJECT_PAY = /^reject_payment_(\d+)$/;
 const RE_REQ_PAY = /^req_pay_(\d+)$/;
@@ -97,6 +98,35 @@ function register(bot) {
         clientId,
         `😔 На жаль, наразі немає вільного фахівця з потрібної спеціалізації.\n\n` +
         `Вашу заявку закрито. Ви можете подати новий запит у будь-який час — натисніть /start.`
+      );
+    } catch (e) {
+      console.error('Не вдалося повідомити клієнта про відхилення', e.message);
+    }
+  }));
+
+  bot.action(RE_REJECT_UNSOLVABLE, adminOnly(async (ctx) => {
+    const clientId = parseClientId(ctx.match);
+    if (!clientId) return ctx.answerCbQuery('Невірний запит.', { show_alert: true });
+
+    const session = await db.getSession(clientId);
+    if (!session || session.status !== 'searching_lawyer') {
+      return ctx.answerCbQuery('Заявку вже опрацьовано.', { show_alert: true });
+    }
+
+    await ctx.answerCbQuery('Заявку відхилено.');
+    const originalText = ctx.callbackQuery.message.text || '';
+    await ctx.editMessageText(
+      `${originalText}\n\n⛔️ <b>Відхилено (неможливо вирішити):</b> ${lawyerHandle(ctx)}`,
+      { parse_mode: 'HTML', reply_markup: { inline_keyboard: [] } }
+    ).catch(() => {});
+
+    await db.deleteSession(clientId);
+
+    try {
+      await ctx.telegram.sendMessage(
+        clientId,
+        `😔 На жаль, після попереднього аналізу вашого запиту наші юристи дійшли висновку, що в даній ситуації юридичний механізм вирішення відсутній.\n\n` +
+        `Вашу заявку закрито.`
       );
     } catch (e) {
       console.error('Не вдалося повідомити клієнта про відхилення', e.message);

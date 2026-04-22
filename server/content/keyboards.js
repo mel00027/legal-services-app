@@ -48,7 +48,8 @@ const receiptOnlyKeyboard = () => Markup.inlineKeyboard([
 
 const caseActionsKeyboard = (clientId) => Markup.inlineKeyboard([
   [Markup.button.callback('✅ Взяти справу', `take_case_${clientId}`)],
-  [Markup.button.callback('❌ Відхилити', `reject_case_${clientId}`)]
+  [Markup.button.callback('❌ Відхилити (немає фахівця)', `reject_case_${clientId}`)],
+  [Markup.button.callback('⛔️ Відхилити (неможливо вирішити)', `reject_unsolv_${clientId}`)]
 ]);
 
 const confirmPaymentKeyboard = (clientId) => Markup.inlineKeyboard([
