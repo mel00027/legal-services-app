@@ -27,6 +27,11 @@ async function initDB() {
     driver: sqlite3.Database
   });
 
+  // Enable WAL for concurrent read/write stability; NORMAL sync for throughput.
+  await db.exec('PRAGMA journal_mode=WAL');
+  await db.exec('PRAGMA synchronous=NORMAL');
+  await db.exec('PRAGMA foreign_keys=ON');
+
   // Table topics
   await db.exec(`
     CREATE TABLE IF NOT EXISTS topics (
@@ -162,6 +167,35 @@ async function deleteSession(userId) {
   await db.run('DELETE FROM sessions WHERE user_id = ?', [userId]);
 }
 
+/**
+ * Atomic CAS: take a case only if it's still in 'searching_lawyer' status.
+ * Returns true if successfully taken, false if already taken/rejected.
+ */
+async function takeCaseAtomic(clientId, lawyerId) {
+  const result = await db.run(
+    `UPDATE sessions
+     SET status = 'awaiting_payment', assigned_lawyer_id = ?, updated_at = ?
+     WHERE user_id = ? AND status = 'searching_lawyer'`,
+    [lawyerId, Date.now(), clientId]
+  );
+  return result.changes > 0;
+}
+
+/**
+ * Atomic CAS: confirm payment only if session is in a payable status.
+ * Prevents double-confirmation race condition.
+ */
+async function confirmPaymentAtomic(clientId, lawyerId) {
+  const result = await db.run(
+    `UPDATE sessions
+     SET status = 'active_consultation', updated_at = ?
+     WHERE user_id = ? AND status IN ('pending_admin_approval', 'awaiting_payment_method')
+       AND (assigned_lawyer_id IS NULL OR assigned_lawyer_id = ?)`,
+    [Date.now(), clientId, lawyerId]
+  );
+  return result.changes > 0;
+}
+
 async function getOldSessions(minutes) {
   const cutoff = Date.now() - (minutes * 60 * 1000);
   const rows = await db.all('SELECT * FROM sessions WHERE status = ? AND updated_at <= ?', ['awaiting_receipt', cutoff]);
@@ -247,6 +281,8 @@ module.exports = {
   saveSession,
   updateSessionStatus,
   deleteSession,
+  takeCaseAtomic,
+  confirmPaymentAtomic,
   getOldSessions,
   getAdminState,
   saveAdminState,
