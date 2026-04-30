@@ -7,7 +7,9 @@ dist/
 
 # Environment secrets
 .env
+.env.local
 server/.env
+studio/.env
 
 # Database (CRITICAL: must NOT be in Git, stores client data for years)
 *.sqlite

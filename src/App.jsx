@@ -6,7 +6,57 @@ import {
   Zap, CheckCircle2, Scale, ChevronUp,
   Star, ArrowRight, Award, Shield
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { useSanityQuery } from './sanity/useSanity.js';
+import {
+  FAQ_QUERY, REVIEWS_QUERY,
+  HOME_PAGE_QUERY, SITE_CONFIG_QUERY, NAVIGATION_QUERY,
+} from './sanity/queries.js';
+
+/* ======================== MOTION PRESETS ======================== */
+
+const EASE_PREMIUM = [0.22, 1, 0.36, 1]; // pragnum.ua-like heavy ease-out
+
+const sectionContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.16, delayChildren: 0.05, ease: EASE_PREMIUM } },
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 48 },
+  visible: { opacity: 1, y: 0, transition: { duration: 1.0, ease: EASE_PREMIUM } },
+};
+
+const fadeUpSoft = {
+  hidden: { opacity: 0, y: 32 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.9, ease: EASE_PREMIUM } },
+};
+
+const cardRise = {
+  hidden: { opacity: 0, y: 60, scale: 0.96 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 1.05, ease: EASE_PREMIUM } },
+};
+
+const VIEWPORT = { once: true, margin: '-100px' };
+
+/* ======================== INTRO OVERLAY ======================== */
+
+const IntroOverlay = () => {
+  const prefersReduced = useReducedMotion();
+  return (
+    <AnimatePresence>
+      <motion.div
+        key="intro-overlay"
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 0 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: prefersReduced ? 0 : 0.9, delay: prefersReduced ? 0 : 0.4, ease: [0.65, 0, 0.35, 1] }}
+        style={{ position: 'fixed', inset: 0, background: '#000', zIndex: 100, pointerEvents: 'none' }}
+        aria-hidden="true"
+      />
+    </AnimatePresence>
+  );
+};
 
 const MilitaryLawyer = lazy(() =>
   import('./pages/MilitaryLawyer').then((m) => ({ default: m.MilitaryLawyer }))
@@ -62,6 +112,15 @@ const serviceItems = [
   { name: 'Захист прав військовослужбовців', icon: ShieldCheck, path: '/military-lawyer', color: 'from-blue-600 to-indigo-600' },
   { name: 'Житлове право', icon: Home, path: '/housing-law', color: 'from-emerald-500 to-teal-600' },
   { name: 'Адміністративні правопорушення', icon: Scale, path: '/administrative-offences', color: 'from-violet-500 to-purple-600' },
+];
+
+const reviewsData = [
+  { name: 'Дмитро К.', role: 'ветеран ЗСУ, м. Харків', text: 'Звільнився зі служби і навіть не підозрював, що мені недоплатили майже 400 тисяч гривень. LegalClick самі порахували, підготували всі документи і подали до суду — я навіть жодного разу не з\'являвся особисто. Питання вирішили повністю.', stars: 5 },
+  { name: 'Олександр Т.', role: 'військовослужбовець ЗСУ', text: 'Проходив ВЛК, комісія спочатку відмовила у звільненні — казали "придатний". Юристи LegalClick оскаржили рішення через Telegram без жодних черг і кабінетів. На руках законне рішення.', stars: 5 },
+  { name: 'Тетяна М.', role: 'дружина мобілізованого, м. Дніпро', text: 'Написала в бот пізно ввечері, вранці вже відповів юрист. Чоловіка мобілізували з порушеннями — все вирішили дистанційно. Жодного офісу, жодної нервотрепки. Дуже вдячна за людське ставлення.', stars: 5 },
+  { name: 'Василь Р.', role: 'демобілізований, м. Запоріжжя', text: 'Думав, питання з виплатами за поранення — це місяці походів по інстанціях. Виявилось — кілька повідомлень у Telegram і все вирішено. Юристи знають військове право від і до, жодних зайвих питань.', stars: 5 },
+  { name: 'Сергій Л.', role: 'учасник бойових дій, м. Львів', text: 'Мене незаконно зняли з квартирної черги як учасника бойових дій — нібито "виявили підстави". Зв\'язався з LegalClick, юрист підготував оскарження і все повернули. Все вирішили цифрово, до жодної інстанції особисто не ходив.', stars: 5 },
+  { name: 'Микола Б.', role: 'водій-далекобійник, м. Полтава', text: 'Зафіксували перевищення швидкості на трасі — на камеру, вантажівка понад норму. Штраф великий, хотів оскаржити. Юрист LegalClick розібрав ситуацію, підготував заперечення. Все онлайн, без суєти.', stars: 5 },
 ];
 
 const faqSchema = {
@@ -121,10 +180,10 @@ const AccordionItem = memo(({ question, answer }) => {
 
   return (
     <div
-      className={`rounded-2xl ${
+      className={`rounded-2xl backdrop-blur-sm ${
         open
-          ? 'bg-white shadow-lg border border-blue-100'
-          : 'bg-white border border-gray-100 shadow-sm'
+          ? 'bg-white/[0.08] border border-blue-400/20'
+          : 'bg-white/[0.04] border border-white/[0.08]'
       }`}
       style={{ WebkitTransform: 'translateZ(0)', transform: 'translateZ(0)', willChange: 'transform' }}
     >
@@ -133,16 +192,16 @@ const AccordionItem = memo(({ question, answer }) => {
         onClick={() => setOpen(!open)}
         aria-expanded={open}
       >
-        <span className="font-bold text-[15px] md:text-[17px] text-[#0D1B2E] pr-4 leading-snug">
+        <span className="font-bold text-[15px] md:text-[17px] text-white pr-4 leading-snug">
           {question}
         </span>
         <div
           className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center ${
-            open ? 'bg-[#2563EB] rotate-180' : 'bg-blue-50'
+            open ? 'bg-[#2563EB] rotate-180' : 'bg-white/10'
           }`}
           style={{ transition: 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s ease' }}
         >
-          <ChevronUp className={`w-4 h-4 ${open ? 'text-white' : 'text-[#2563EB]'}`} style={{ transition: 'color 0.2s ease' }} />
+          <ChevronUp className={`w-4 h-4 ${open ? 'text-white' : 'text-white/60'}`} style={{ transition: 'color 0.2s ease' }} />
         </div>
       </button>
       <AnimatePresence initial={false}>
@@ -156,7 +215,7 @@ const AccordionItem = memo(({ question, answer }) => {
             style={{ willChange: 'height, opacity', WebkitTransform: 'translateZ(0)' }}
           >
             <div className="px-5 md:px-6 pb-5 md:pb-6">
-              <p className="text-[#475569] leading-relaxed text-sm md:text-base border-t border-gray-100 pt-4 whitespace-pre-line">
+              <p className="text-white/55 leading-relaxed text-sm md:text-base border-t border-white/[0.08] pt-4 whitespace-pre-line">
                 {answer}
               </p>
             </div>
@@ -177,7 +236,7 @@ const ServiceCard = memo(({ name, icon: Icon, path, color }) => {
       : '#8B5CF6, #7C3AED';
 
   const inner = (
-    <div className="flex items-center justify-between p-5 md:p-6 rounded-2xl bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-blue-900/10 md:transition-all md:duration-300 md:hover:-translate-y-2 cursor-pointer group active:scale-[0.98] transition-transform overflow-hidden relative">
+    <div className="flex items-center justify-between p-5 md:p-6 rounded-2xl bg-white/[0.05] backdrop-blur-sm border border-white/[0.1] hover:bg-white/[0.09] md:transition-all md:duration-300 md:hover:-translate-y-2 cursor-pointer group active:scale-[0.98] transition-transform overflow-hidden relative">
       <div
         className="absolute top-0 left-0 w-full h-[3px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         style={{ backgroundImage: `linear-gradient(to right, ${gradientColors})` }}
@@ -190,10 +249,10 @@ const ServiceCard = memo(({ name, icon: Icon, path, color }) => {
         >
           <Icon className="w-5 h-5 text-white" strokeWidth={2} />
         </div>
-        <span className="font-bold text-[#0D1B2E] text-[15px] md:text-base">{name}</span>
+        <span className="font-bold text-white text-[15px] md:text-base">{name}</span>
       </div>
-      <div className="w-8 h-8 rounded-full bg-gray-50 group-hover:bg-blue-50 flex items-center justify-center transition-colors shrink-0">
-        <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[#2563EB] transition-colors" strokeWidth={2.5} />
+      <div className="w-8 h-8 rounded-full bg-white/10 group-hover:bg-blue-500/20 flex items-center justify-center transition-colors shrink-0">
+        <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-[#60A5FA] transition-colors" strokeWidth={2.5} />
       </div>
     </div>
   );
@@ -227,19 +286,19 @@ const NavigationHeader = () => {
   };
 
   const headerBase = 'transition-all duration-300 z-50 fixed top-0 w-full';
-  const scrolledStyle = 'bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100';
-  const clearStyle = 'bg-white border-b border-transparent';
+  const scrolledStyle = 'bg-[#020817]/90 backdrop-blur-md shadow-sm border-b border-white/[0.06]';
+  const clearStyle = 'bg-transparent border-b border-transparent';
 
   return (
     <>
       {/* Mobile */}
-      <header className={`md:hidden ${headerBase} px-4 py-3 flex justify-center items-center ${scrolled ? scrolledStyle : 'bg-white shadow-sm border-b border-gray-100'}`}>
+      <header className={`md:hidden ${headerBase} px-4 py-3 flex justify-center items-center ${scrolled ? scrolledStyle : 'bg-[#020817]/80 backdrop-blur-sm border-b border-white/[0.05]'}`}>
         <Link to="/" className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#7C3AED] text-white flex items-center justify-center font-black text-base shadow-lg shadow-blue-500/25">
             L
           </div>
-          <span className="text-[17px] font-black tracking-tight text-[#0D1B2E]">
-            Legal<span className="text-[#2563EB]">Click</span>
+          <span className="text-[17px] font-black tracking-tight text-white">
+            Legal<span className="text-[#60A5FA]">Click</span>
           </span>
         </Link>
       </header>
@@ -250,19 +309,19 @@ const NavigationHeader = () => {
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#7C3AED] text-white flex items-center justify-center font-black text-lg shadow-lg shadow-blue-500/25">
             L
           </div>
-          <span className="text-xl font-black tracking-tight text-[#0D1B2E]">
-            Legal<span className="text-[#2563EB]">Click</span>
+          <span className="text-xl font-black tracking-tight text-white">
+            Legal<span className="text-[#60A5FA]">Click</span>
           </span>
         </Link>
 
-        <nav className="flex items-center gap-8 font-semibold text-[#475569] text-[15px]">
+        <nav className="flex items-center gap-8 font-semibold text-white/60 text-[15px]">
           {[
             { label: 'Головна', id: 'home' },
             { label: 'Послуги', id: 'services' },
             { label: 'Як це працює', id: 'about' },
             { label: 'FAQ', id: 'faq' },
           ].map(({ label, id }) => (
-            <a key={id} href={`/#${id === 'home' ? '' : id}`} onClick={(e) => handleNavClick(e, id)} className="hover:text-[#2563EB] transition-colors">
+            <a key={id} href={`/#${id === 'home' ? '' : id}`} onClick={(e) => handleNavClick(e, id)} className="hover:text-white transition-colors">
               {label}
             </a>
           ))}
@@ -300,7 +359,7 @@ const MobileBottomBar = ({ activeTab, setActiveTab }) => {
   const active = (id) => activeTab === id && isHome;
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white/96 backdrop-blur-md border-t border-gray-100 px-2 pt-1.5 pb-1.5 flex justify-around items-center z-50 safe-bottom shadow-[0_-2px_16px_rgba(13,27,46,0.06)]">
+    <nav className="md:hidden fixed bottom-0 left-0 w-full bg-[#020817]/90 backdrop-blur-md border-t border-white/[0.07] px-2 pt-1.5 pb-1.5 flex justify-around items-center z-50 safe-bottom">
       {[
         { id: 'home', label: 'Головна', Icon: Home },
         { id: 'services', label: 'Послуги', Icon: Grid },
@@ -310,7 +369,7 @@ const MobileBottomBar = ({ activeTab, setActiveTab }) => {
           key={id}
           onClick={() => goTo(id)}
           className={`flex flex-col items-center gap-0.5 py-1.5 px-4 rounded-xl transition-all ${
-            active(id) ? 'text-[#2563EB] bg-blue-50' : 'text-[#94A3B8]'
+            active(id) ? 'text-[#60A5FA] bg-blue-500/15' : 'text-white/40'
           }`}
         >
           <Icon className="w-5 h-5" strokeWidth={active(id) ? 2.5 : 2} />
@@ -356,6 +415,56 @@ const MainFooter = () => (
 /* ======================== HOME PAGE ======================== */
 
 const HomePage = () => {
+  const { data: cmsFaq } = useSanityQuery(FAQ_QUERY, faqData);
+  const { data: cmsReviews } = useSanityQuery(REVIEWS_QUERY, reviewsData);
+  const { data: cmsHome } = useSanityQuery(HOME_PAGE_QUERY, null);
+  const { data: cmsSite } = useSanityQuery(SITE_CONFIG_QUERY, null);
+
+  const activeFaq = cmsFaq || faqData;
+  const activeReviews = cmsReviews || reviewsData;
+
+  // CMS-driven values with hardcoded fallbacks
+  const hero = cmsHome?.hero || {};
+  const heroTitleStart = hero.titleStart || 'Юрист у твоєму';
+  const heroTitleGradient = hero.titleGradient || 'смартфоні';
+  const heroSubtitle = hero.subtitle || 'Рапорти, виплати та житлові суперечки. Все онлайн. Описуєш ситуацію в чаті — отримуєш результат.';
+  const heroCtaLabel = hero.ctaLabel || 'Отримати допомогу в чаті';
+  const heroSecondaryCtaLabel = hero.secondaryCtaLabel || 'Як це працює';
+
+  const activeMessages = (cmsHome?.chatMessages?.length ? cmsHome.chatMessages.map((m) => m.text) : null) || clientMessages;
+  const activeServiceCards = cmsHome?.serviceCards || serviceItems;
+  const activeAdvantages = cmsHome?.advantages || null;
+  const activeHowItWorks = cmsHome?.howItWorks || null;
+  const activeStats = cmsHome?.stats || [
+    { value: '500+', label: 'Вирішених справ' },
+    { value: '4.9', label: 'Рейтинг платформи' },
+    { value: '20-30 хв', label: 'Час першої відповіді' },
+    { value: '100%', label: 'Онлайн без черги' },
+  ];
+  const activeTrust = cmsHome?.trustCard || {
+    authorName: 'LegalClick Team',
+    quote: "Вивчив ваш рапорт та висновок ВЛК. Командир зобов'язаний розглянути рапорт протягом 10 днів — ст. 26 Закону «Про військовий обов'язок». Ось ваш план дій:",
+    reply: ['1️⃣ Подаємо скаргу командиру бригади.', '2️⃣ Дублюємо рапорт через «Армія».', '3️⃣ Без відповіді — позов до суду 💼'],
+  };
+  const activeFooterCta = cmsHome?.footerCta || {
+    heading: 'Юридична підтримка — в одному кліку',
+    subtitle: 'Не відкладайте на потім. Відкрийте чат, опишіть ситуацію і отримайте план дій вже сьогодні.',
+    buttonLabel: 'Чат з юристом',
+  };
+
+  const botLink = cmsSite?.botLink || BOT_LINK;
+  const pricingAmount = cmsSite?.pricingAmount || 1000;
+  const pricingTitle = cmsSite?.pricingTitle || 'Первинна консультація та попередній аналіз документів';
+  const pricingHeadingStart = cmsSite?.pricingHeadingStart || 'Прозорий старт:';
+  const pricingHeadingGradient = cmsSite?.pricingHeadingGradient || 'жодних прихованих платежів';
+  const pricingDisclaimer = cmsSite?.pricingDisclaimer || 'Якщо знадобиться складання позовів чи супровід — фіксована ціна ДО початку роботи. Рішення завжди за вами.';
+  const pricingCtaLabel = cmsSite?.pricingCtaLabel || 'Почати';
+  const pricingFeatures = cmsSite?.pricingFeatures || [
+    { label: 'Аналіз документів', desc: 'Вивчаємо рапорти, договори чи рішення.' },
+    { label: 'Ідеальний матч', desc: 'Направляємо справу профільному юристу.' },
+    { label: 'Висновок у чаті', desc: 'Чітка відповідь щодо перспектив та кроків.' },
+  ];
+
   useEffect(() => {
     const script = document.createElement('script');
     script.type = 'application/ld+json';
@@ -367,118 +476,106 @@ const HomePage = () => {
   return (
   <>
     {/* ===== HERO ===== */}
-    <section id="home" className="relative overflow-hidden bg-[#020817]">
-      {/* Ambient blobs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-32 -left-24 w-[500px] h-[500px] bg-[#2563EB]/25 rounded-full blur-[130px]" />
-        <motion.div
-          aria-hidden="true"
-          className="absolute -bottom-36 -right-20 w-[540px] h-[540px] rounded-full blur-[130px] pointer-events-none"
-          animate={{
-            backgroundColor: [
-              'rgba(124,58,237,0.22)',
-              'rgba(59,130,246,0.24)',
-              'rgba(109,40,217,0.22)',
-              'rgba(124,58,237,0.22)',
-            ],
-            scale: [1, 1.06, 1.03, 1],
-            opacity: [0.85, 1, 0.9, 0.85],
+    <section id="home" className="relative overflow-hidden bg-transparent">
+      {/* Hero-only Феміда video — scrolls naturally with the section */}
+      <div className="hidden md:block absolute top-1/2 -left-80 lg:-left-[28rem] xl:-left-[34rem] -translate-y-1/2 w-[1100px] lg:w-[1350px] xl:w-[1550px] aspect-video pointer-events-none">
+        <video
+          className="absolute inset-0 w-full h-full object-cover select-none"
+          style={{
+            filter: 'saturate(1.05) contrast(1.06) brightness(0.78)',
+            mixBlendMode: 'screen',
           }}
-          transition={{
-            duration: 20,
-            ease: 'easeInOut',
-            repeat: Infinity,
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+        >
+          <source src="/hero-bg.mp4" type="video/mp4" />
+        </video>
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(ellipse 60% 70% at 38% 50%, transparent 20%, rgba(2,8,23,0.55) 52%, #020817 78%)',
           }}
         />
-        <div className="absolute top-1/2 left-1/3 w-[280px] h-[280px] bg-[#1D4ED8]/15 rounded-full blur-[100px] -translate-y-1/2" />
-
-        {/* Desktop-only ambient video — large, with stacked vignette that kills edges into site bg */}
-        <div className="hidden md:block absolute top-1/2 -left-80 lg:-left-[28rem] xl:-left-[34rem] -translate-y-1/2 w-[1100px] lg:w-[1350px] xl:w-[1550px] aspect-video pointer-events-none">
-          <video
-            className="absolute inset-0 w-full h-full object-cover select-none"
-            style={{
-              WebkitMaskImage:
-                'radial-gradient(ellipse at 50% 50%, #000 25%, rgba(0,0,0,0.4) 55%, transparent 78%)',
-              maskImage:
-                'radial-gradient(ellipse at 50% 50%, #000 25%, rgba(0,0,0,0.4) 55%, transparent 78%)',
-              filter: 'saturate(1.1) contrast(1.08) brightness(0.95)',
-              mixBlendMode: 'screen',
-            }}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            aria-hidden="true"
-          >
-            <source src="/hero-bg.mp4" type="video/mp4" />
-          </video>
-          {/* Vignette overlay in site-bg color — seals video edges into background */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                'radial-gradient(ellipse at 50% 50%, transparent 18%, rgba(2,8,23,0.7) 48%, #020817 75%)',
-            }}
-          />
-        </div>
-
-        {/* Subtle grid */}
         <div
-          className="absolute inset-0 opacity-[0.025]"
+          className="absolute inset-0"
           style={{
-            backgroundImage:
-              'linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
+            background:
+              'linear-gradient(to bottom, #020817 0%, transparent 18%, transparent 82%, #020817 100%)',
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(to right, transparent 30%, rgba(2,8,23,0.4) 62%, #020817 85%)',
           }}
         />
       </div>
 
-      <div className="max-w-7xl mx-auto px-5 md:px-8 lg:px-16 pt-12 pb-14 md:py-28 lg:py-32 flex flex-col md:flex-row items-center gap-10 md:gap-16 lg:gap-24 relative z-10">
+      <motion.div
+        className="max-w-7xl mx-auto px-5 md:px-8 lg:px-16 pt-12 pb-14 md:py-28 lg:py-32 flex flex-col md:flex-row items-center gap-10 md:gap-16 lg:gap-24 relative z-10"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: 0.18, delayChildren: 0.7, ease: [0.22, 1, 0.36, 1] } },
+        }}
+      >
         {/* ── Left: text ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="flex-1 text-center md:text-left"
-        >
+        <div className="flex-1 text-center md:text-left">
           {/* Status badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-dark text-white/75 text-[11px] font-semibold uppercase tracking-[0.1em] mb-7">
-            <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_#4ade80]" />
-            100% Онлайн · Відповідь за 20-30 хвилин
-          </div>
-
-          <h1 className="text-[38px] sm:text-5xl md:text-5xl lg:text-[68px] font-black text-white leading-[1.05] tracking-tight mb-5 md:mb-7">
-            Юрист у твоєму
+          <motion.h1
+            variants={{ hidden: { opacity: 0, y: 48 }, visible: { opacity: 1, y: 0, transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] } } }}
+            style={{ willChange: 'transform, opacity' }}
+            className="no-bg text-[38px] sm:text-5xl md:text-5xl lg:text-[68px] font-black text-white leading-[1.05] tracking-tight mb-1"
+          >
+            {heroTitleStart}
             <br />
-            <span className="text-gradient-blue">смартфоні</span>
-          </h1>
+            <span className="text-gradient-blue">{heroTitleGradient}</span>
+          </motion.h1>
 
-          <p className="text-white/55 text-base md:text-lg lg:text-xl leading-relaxed mb-8 md:mb-10 max-w-[480px] mx-auto md:mx-0">
-            Рапорти, виплати та житлові суперечки. Все онлайн. Описуєш ситуацію в чаті — отримуєш результат.
-          </p>
+          <motion.p
+            variants={{ hidden: { opacity: 0, y: 32, filter: 'blur(6px)' }, visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 1.1, ease: [0.22, 1, 0.36, 1] } } }}
+            style={{ willChange: 'transform, opacity' }}
+            className="text-white/55 text-base md:text-lg lg:text-xl leading-relaxed mb-8 md:mb-10 max-w-[480px] mx-auto md:mx-0"
+          >
+            {heroSubtitle}
+          </motion.p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 32 }, visible: { opacity: 1, y: 0, transition: { duration: 1.1, ease: [0.22, 1, 0.36, 1] } } }}
+            style={{ willChange: 'transform, opacity' }}
+            className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start"
+          >
             <motion.a
-              href={BOT_LINK}
-              className="bg-gradient-to-r from-[#2563EB] to-[#7C3AED] text-white rounded-2xl py-[18px] px-7 md:px-8 font-bold text-base md:text-lg flex items-center justify-center gap-3 shadow-[0_8px_32px_rgba(37,99,235,0.4)] active:scale-95 transition-transform"
+              href={botLink}
+              className="light-sweep-target bg-gradient-to-r from-[#2563EB] to-[#7C3AED] text-white rounded-2xl py-[18px] px-7 md:px-8 font-bold text-base md:text-lg flex items-center justify-center gap-3 shadow-[0_8px_32px_rgba(37,99,235,0.4)] active:scale-95 transition-transform"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.96 }}
               transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             >
               <MessageCircle className="w-5 h-5 md:w-6 md:h-6" />
-              Отримати допомогу в чаті
+              {heroCtaLabel}
             </motion.a>
             <button
               className="hidden sm:flex border border-white/15 text-white/80 hover:border-white/30 hover:text-white rounded-2xl py-[18px] px-8 font-semibold text-lg items-center justify-center gap-2 hover:bg-white/5 transition-all"
               onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              Як це працює <ArrowRight className="w-5 h-5" />
+              {heroSecondaryCtaLabel} <ArrowRight className="w-5 h-5" />
             </button>
-          </div>
+          </motion.div>
 
           {/* ── Mobile chat preview (inline, not absolute) ── */}
-          <div className="md:hidden mt-8 bg-white/8 backdrop-blur-md border border-white/10 rounded-2xl p-4">
+          <motion.div
+            variants={{ hidden: { opacity: 0, y: 32, filter: 'blur(6px)' }, visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 1.0, ease: [0.22, 1, 0.36, 1] } } }}
+            style={{ willChange: 'transform, opacity' }}
+            className="md:hidden mt-8 bg-white/8 backdrop-blur-md border border-white/10 rounded-2xl p-4"
+          >
             <div className="flex items-center gap-2.5 mb-3">
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2563EB] to-[#7C3AED] flex items-center justify-center text-white font-black text-sm">
                 L
@@ -494,17 +591,15 @@ const HomePage = () => {
             <div className="bg-white/10 p-3 rounded-xl rounded-tl-none text-[12px] text-white/80 leading-relaxed">
               Вітаю! Опишіть вашу ситуацію текстом 👇
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
 
         {/* ── Right: phone mockup (desktop only) ── */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.92, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          variants={{ hidden: { opacity: 0, scale: 0.85, y: 60 }, visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 60, damping: 22, mass: 1.2 } } }}
+          style={{ willChange: 'transform, opacity' }}
           className="hidden md:flex flex-1 justify-center lg:justify-end relative"
         >
-          <div className="absolute w-[280px] h-[280px] bg-[#2563EB]/20 rounded-full blur-[80px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
           <div className="relative w-[300px] lg:w-[320px]">
             <div className="w-full bg-[#0D1B2E] rounded-[44px] p-3 shadow-[0_40px_120px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.06)] border border-white/5">
               {/* Notch */}
@@ -537,23 +632,29 @@ const HomePage = () => {
             </div>
           </div>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
 
     {/* ===== ADVANTAGES ===== */}
-    <section id="why-us" className="px-4 md:px-5 py-14 md:py-32 bg-[#F8FAFF] border-t border-gray-100 overflow-hidden">
+    <section id="why-us" className="px-4 md:px-5 py-14 md:py-32 bg-transparent overflow-hidden">
       <motion.div
         className="max-w-7xl mx-auto"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
+        variants={sectionContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={VIEWPORT}
       >
         <div className="text-center mb-10 md:mb-16">
-          <div className="section-eyebrow bg-blue-50 text-[#2563EB] mb-4 mx-auto">
+          <motion.div variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }} className="section-eyebrow bg-white/10 border border-white/10 text-white/60 mb-4 mx-auto">
             <Shield className="w-3.5 h-3.5" /> Чому LegalClick
-          </div>
-          <h2 className="text-2xl md:text-5xl font-black text-[#0D1B2E] tracking-tight">Чому обирають нас</h2>
+          </motion.div>
+          <motion.h2
+              variants={fadeUp}
+              style={{ willChange: 'transform, opacity' }}
+              className="text-2xl md:text-5xl font-black text-white tracking-tight"
+            >
+              Чому обирають нас
+            </motion.h2>
         </div>
 
         <div className="flex gap-4 md:grid md:grid-cols-3 md:gap-6 overflow-x-auto no-scrollbar scroll-touch pb-4 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory">
@@ -580,17 +681,19 @@ const HomePage = () => {
               items: ['Діємо негайно, без записів', 'Автоматичний розподіл юристу', 'Початок роботи в день звернення'],
             },
           ].map(({ Icon, gradient, check, title, items }, i) => (
-            <div
+            <motion.div
               key={i}
-              className="min-w-[270px] md:min-w-0 md:w-full bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 snap-center shrink-0 shadow-sm hover:shadow-xl hover:shadow-blue-900/10 md:transition-all md:duration-300 md:hover:-translate-y-2 border border-gray-100 group"
+              variants={cardRise}
+              style={{ willChange: 'transform, opacity' }}
+              className="min-w-[270px] md:min-w-0 md:w-full bg-white/[0.04] backdrop-blur-sm rounded-2xl md:rounded-3xl p-6 md:p-8 snap-center shrink-0 hover:bg-white/[0.07] md:transition-all md:duration-300 md:hover:-translate-y-2 border border-white/[0.08] group"
             >
               <div
                 className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}
               >
                 <Icon className="w-6 h-6 md:w-7 md:h-7 text-white" strokeWidth={2} />
               </div>
-              <h3 className="font-black text-base md:text-xl mb-3 text-[#0D1B2E]">{title}</h3>
-              <ul className="space-y-2 text-[#475569] text-sm leading-relaxed">
+              <h3 className="font-black text-base md:text-xl mb-3 text-white">{title}</h3>
+              <ul className="space-y-2 text-white/55 text-sm leading-relaxed">
                 {items.map((item) => (
                   <li key={item} className="flex items-start gap-2">
                     <CheckCircle2 className={`w-4 h-4 ${check} shrink-0 mt-0.5`} strokeWidth={2.5} />
@@ -598,56 +701,66 @@ const HomePage = () => {
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           ))}
         </div>
       </motion.div>
     </section>
 
     {/* ===== SERVICES ===== */}
-    <section id="services" className="px-4 md:px-5 py-12 md:py-32 bg-white overflow-hidden">
+    <section id="services" className="px-4 md:px-5 py-12 md:py-32 bg-transparent overflow-hidden">
       <motion.div
         className="max-w-7xl mx-auto"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
+        variants={sectionContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={VIEWPORT}
       >
         <div className="mb-8 md:mb-14">
-          <div className="section-eyebrow bg-blue-50 text-[#2563EB] mb-4">
+          <motion.div variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }} className="section-eyebrow bg-white/10 border border-white/10 text-white/60 mb-4">
             <Scale className="w-3.5 h-3.5" /> Напрямки
-          </div>
-          <h2 className="text-2xl md:text-5xl font-black text-[#0D1B2E] tracking-tight mb-2 md:mb-4">
+          </motion.div>
+          <motion.h2
+            variants={fadeUp}
+            style={{ willChange: 'transform, opacity' }}
+            className="text-2xl md:text-5xl font-black text-white tracking-tight mb-2 md:mb-4"
+          >
             Напрямки послуг
-          </h2>
-          <p className="text-[#475569] text-sm md:text-xl">Легке розв'язання складних питань</p>
+          </motion.h2>
+          <motion.p variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }} className="text-white/50 text-sm md:text-xl">
+            Легке розв'язання складних питань
+          </motion.p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
           {serviceItems.map((item, i) => (
-            <ServiceCard key={i} {...item} />
+            <motion.div key={i} variants={cardRise} style={{ willChange: 'transform, opacity' }}>
+              <ServiceCard {...item} />
+            </motion.div>
           ))}
         </div>
       </motion.div>
     </section>
 
     {/* ===== HOW IT WORKS ===== */}
-    <section id="about" className="px-4 md:px-5 py-14 md:py-32 bg-[#020817] text-white relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#2563EB]/12 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#7C3AED]/10 rounded-full blur-[160px] pointer-events-none" />
-
-
+    <section id="about" className="px-4 md:px-5 py-14 md:py-32 bg-transparent text-white relative overflow-hidden">
       <motion.div
         className="max-w-7xl mx-auto relative z-10"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
+        variants={sectionContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={VIEWPORT}
       >
         <div className="text-center mb-12 md:mb-20">
-          <div className="section-eyebrow bg-white/10 border border-white/10 text-white/60 mb-4 mx-auto">
+          <motion.div variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }} className="section-eyebrow bg-white/10 border border-white/10 text-white/60 mb-4 mx-auto">
             <Zap className="w-3.5 h-3.5" /> Процес
-          </div>
-          <h2 className="text-2xl md:text-5xl font-black tracking-tight">Як це працює</h2>
+          </motion.div>
+          <motion.h2
+              variants={fadeUp}
+              style={{ willChange: 'transform, opacity' }}
+              className="text-2xl md:text-5xl font-black tracking-tight"
+            >
+              Як це працює
+            </motion.h2>
         </div>
 
         {/* Mobile steps */}
@@ -657,7 +770,7 @@ const HomePage = () => {
             { n: '2', title: 'Пишете в чат', desc: 'Опишіть ситуацію та додайте фото. Юрист вже вивчає документи і будує стратегію.', accent: false },
             { n: '3', title: 'Отримуєте рішення', desc: 'В смартфон надходить покроковий план або готові документи. Все зрозумілою мовою.', accent: true },
           ].map(({ n, title, desc, accent }) => (
-            <div key={n} className="text-center">
+            <motion.div key={n} variants={cardRise} style={{ willChange: 'transform, opacity' }} className="text-center">
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-base mx-auto mb-3 ${
                   accent
@@ -669,7 +782,7 @@ const HomePage = () => {
               </div>
               <h3 className="font-black text-lg mb-1.5">{title}</h3>
               <p className="text-white/50 text-sm leading-relaxed max-w-xs mx-auto">{desc}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
 
@@ -680,7 +793,7 @@ const HomePage = () => {
             { n: '2', title: 'Пишете в чат', desc: 'Опишіть ситуацію та додайте фото документів. Юрист вже будує правову стратегію.', accent: false },
             { n: '3', title: 'Отримуєте рішення', desc: 'Ви отримаєте план дій або готові документи. Проблема вирішена 100% онлайн.', accent: true },
           ].map(({ n, title, desc, accent }) => (
-            <div key={n} className="relative z-10 text-center">
+            <motion.div key={n} variants={cardRise} style={{ willChange: 'transform, opacity' }} className="relative z-10 text-center">
               <div
                 className={`w-14 h-14 rounded-full flex items-center justify-center font-black text-xl mx-auto mb-8 ${
                   accent
@@ -692,49 +805,50 @@ const HomePage = () => {
               </div>
               <h3 className="font-black text-2xl mb-4">{title}</h3>
               <p className="text-white/50 text-base leading-relaxed max-w-xs mx-auto">{desc}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </motion.div>
     </section>
 
     {/* ===== TRUST ===== */}
-    <section className="px-4 md:px-5 py-12 md:py-24 bg-white overflow-hidden">
+    <section className="px-4 md:px-5 py-12 md:py-24 bg-transparent overflow-hidden">
       <motion.div
         className="max-w-6xl mx-auto"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
+        variants={sectionContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={VIEWPORT}
       >
         <div className="text-center mb-10 md:mb-16">
-          <div className="section-eyebrow bg-amber-50 text-amber-600 mb-4 mx-auto">
+          <motion.div variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }} className="section-eyebrow bg-amber-500/10 border border-amber-500/20 text-amber-400 mb-4 mx-auto">
             <Award className="w-3.5 h-3.5" /> Результати
-          </div>
-          <h2 className="text-2xl md:text-5xl font-black text-[#0D1B2E] tracking-tight">Довіра у числах</h2>
+          </motion.div>
+          <motion.h2
+              variants={fadeUp}
+              style={{ willChange: 'transform, opacity' }}
+              className="text-2xl md:text-5xl font-black text-white tracking-tight"
+            >
+              Довіра у числах
+            </motion.h2>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-10 md:mb-16">
-          {[
-            { value: '500+', label: 'Вирішених справ' },
-            { value: '4.9', label: 'Рейтинг платформи' },
-            { value: '20-30 хв', label: 'Час першої відповіді' },
-            { value: '100%', label: 'Онлайн без черги' },
-          ].map(({ value, label }) => (
-            <div key={label} className="text-center bg-[#F8FAFF] rounded-2xl p-4 md:p-8 border border-gray-100">
+          {activeStats.map(({ value, label }, i) => (
+            <motion.div key={label || i} variants={cardRise} style={{ willChange: 'transform, opacity' }} className="text-center bg-white/[0.04] backdrop-blur-sm rounded-2xl p-4 md:p-8 border border-white/[0.08]">
               <div className="text-2xl md:text-5xl font-black text-gradient-blue mb-2">{value}</div>
-              <div className="text-[#475569] text-[11px] md:text-sm font-medium leading-snug">{label}</div>
-            </div>
+              <div className="text-white/50 text-[11px] md:text-sm font-medium leading-snug">{label}</div>
+            </motion.div>
           ))}
         </div>
 
-        <div className="max-w-2xl mx-auto bg-[#F8FAFF] p-5 md:p-8 rounded-2xl md:rounded-3xl border border-gray-100 shadow-lg">
+        <motion.div variants={fadeUp} style={{ willChange: 'transform, opacity' }} className="max-w-2xl mx-auto bg-white/[0.04] backdrop-blur-sm p-5 md:p-8 rounded-2xl md:rounded-3xl border border-white/[0.08]">
           <div className="flex items-center gap-3 mb-5">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2563EB] to-[#7C3AED] flex items-center justify-center text-white font-black shrink-0">
               L
             </div>
             <div>
-              <h4 className="font-black text-[#0D1B2E] text-sm md:text-base leading-none">LegalClick Team</h4>
+              <h4 className="font-black text-white text-sm md:text-base leading-none">{activeTrust.authorName}</h4>
               <div className="flex items-center gap-1 mt-1">
                 <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
                 <p className="text-[10px] md:text-xs text-green-500 font-medium">Онлайн</p>
@@ -742,123 +856,102 @@ const HomePage = () => {
             </div>
           </div>
           <div className="space-y-3">
-            <div className="bg-white p-4 rounded-2xl rounded-tl-none shadow-sm text-[13px] md:text-sm text-[#0D1B2E] leading-relaxed border border-gray-100">
-              «Вивчив ваш рапорт та висновок ВЛК. Командир зобов'язаний розглянути рапорт протягом 10 днів — ст.&nbsp;26 Закону «Про військовий обов'язок». Ось ваш план дій:»
+            <div className="bg-white/[0.07] p-4 rounded-2xl rounded-tl-none text-[13px] md:text-sm text-white/80 leading-relaxed border border-white/[0.08]">
+              «{activeTrust.quote}»
             </div>
             <div className="bg-[#2563EB] p-4 rounded-2xl rounded-tl-none shadow-sm text-[13px] md:text-sm text-white leading-relaxed space-y-1">
-              <p>1️⃣ Подаємо скаргу командиру бригади.</p>
-              <p>2️⃣ Дублюємо рапорт через «Армія».</p>
-              <p>3️⃣ Без відповіді — позов до суду 💼</p>
+              {activeTrust.reply.map((line, i) => (
+                <p key={i}>{line}</p>
+              ))}
             </div>
           </div>
-        </div>
+        </motion.div>
       </motion.div>
     </section>
 
     {/* ===== REVIEWS ===== */}
-    <section className="py-14 md:py-28 bg-[#F8FAFF] overflow-hidden">
+    <section className="py-14 md:py-28 bg-transparent overflow-hidden">
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
+        variants={sectionContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={VIEWPORT}
       >
         <div className="text-center mb-10 md:mb-14 px-4 md:px-5">
-          <div className="section-eyebrow bg-blue-50 text-[#2563EB] mb-4 mx-auto">
-            <Star className="w-3.5 h-3.5 fill-[#2563EB]" /> Відгуки клієнтів
-          </div>
-          <h2 className="text-2xl md:text-5xl font-black text-[#0D1B2E] tracking-tight">Що кажуть наші клієнти</h2>
-          <p className="text-[#475569] mt-3 text-sm md:text-base max-w-xl mx-auto">Реальні історії людей, які вирішили свої проблеми онлайн — без черг і офісів</p>
+          <motion.div variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }} className="section-eyebrow bg-white/10 border border-white/10 text-white/60 mb-4 mx-auto">
+            <Star className="w-3.5 h-3.5 fill-white/60" /> Відгуки клієнтів
+          </motion.div>
+          <motion.h2
+              variants={fadeUp}
+              style={{ willChange: 'transform, opacity' }}
+              className="text-2xl md:text-5xl font-black text-white tracking-tight"
+            >
+              Що кажуть наші клієнти
+            </motion.h2>
+          <motion.p variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }} className="text-white/50 mt-3 text-sm md:text-base max-w-xl mx-auto">
+            Реальні історії людей, які вирішили свої проблеми онлайн — без черг і офісів
+          </motion.p>
         </div>
 
         <div
           className="flex gap-4 overflow-x-auto pb-4 px-4 md:px-5 snap-x snap-mandatory"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
         >
-          {[
-            {
-              name: 'Дмитро К.',
-              role: 'ветеран ЗСУ, м. Харків',
-              text: 'Звільнився зі служби і навіть не підозрював, що мені недоплатили майже 400 тисяч гривень. LegalClick самі порахували, підготували всі документи і подали до суду — я навіть жодного разу не з\'являвся особисто. Питання вирішили повністю.',
-              stars: 5
-            },
-            {
-              name: 'Олександр Т.',
-              role: 'військовослужбовець ЗСУ',
-              text: 'Проходив ВЛК, комісія спочатку відмовила у звільненні — казали "придатний". Юристи LegalClick оскаржили рішення через Telegram без жодних черг і кабінетів. На руках законне рішення.',
-              stars: 5
-            },
-            {
-              name: 'Тетяна М.',
-              role: 'дружина мобілізованого, м. Дніпро',
-              text: 'Написала в бот пізно ввечері, вранці вже відповів юрист. Чоловіка мобілізували з порушеннями — все вирішили дистанційно. Жодного офісу, жодної нервотрепки. Дуже вдячна за людське ставлення.',
-              stars: 5
-            },
-            {
-              name: 'Василь Р.',
-              role: 'демобілізований, м. Запоріжжя',
-              text: 'Думав, питання з виплатами за поранення — це місяці походів по інстанціях. Виявилось — кілька повідомлень у Telegram і все вирішено. Юристи знають військове право від і до, жодних зайвих питань.',
-              stars: 5
-            },
-            {
-              name: 'Сергій Л.',
-              role: 'учасник бойових дій, м. Львів',
-              text: 'Мене незаконно зняли з квартирної черги як учасника бойових дій — нібито "виявили підстави". Зв\'язався з LegalClick, юрист підготував оскарження і все повернули. Все вирішили цифрово, до жодної інстанції особисто не ходив.',
-              stars: 5
-            },
-            {
-              name: 'Микола Б.',
-              role: 'водій-далекобійник, м. Полтава',
-              text: 'Зафіксували перевищення швидкості на трасі — на камеру, вантажівка понад норму. Штраф великий, хотів оскаржити. Юрист LegalClick розібрав ситуацію, підготував заперечення. Все онлайн, без суєти.',
-              stars: 5
-            },
-          ].map(({ name, role, text, stars }) => (
-            <div
-              key={name}
-              className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex flex-col gap-4 shrink-0 snap-start"
-              style={{ width: 'min(80vw, 300px)' }}
+          {activeReviews.map(({ _id, name, role, text, stars }) => (
+            <motion.div
+              key={_id || name}
+              variants={cardRise}
+              style={{ willChange: 'transform, opacity', width: 'min(80vw, 300px)' }}
+              className="bg-white/[0.05] backdrop-blur-sm rounded-2xl p-5 border border-white/[0.09] flex flex-col gap-4 shrink-0 snap-start"
             >
               <div className="flex items-center gap-0.5">
                 {Array.from({ length: stars }).map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-[#F59E0B] text-[#F59E0B]" />
                 ))}
               </div>
-              <p className="text-[#1E293B] text-sm leading-relaxed flex-1">«{text}»</p>
-              <div className="flex items-center gap-3 pt-1 border-t border-gray-100">
+              <p className="text-white/70 text-sm leading-relaxed flex-1">«{text}»</p>
+              <div className="flex items-center gap-3 pt-1 border-t border-white/[0.08]">
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#2563EB] to-[#7C3AED] flex items-center justify-center text-white font-black text-sm shrink-0">
                   {name[0]}
                 </div>
                 <div>
-                  <p className="font-bold text-[#0D1B2E] text-sm leading-tight">{name}</p>
-                  <p className="text-[#94A3B8] text-[11px] mt-0.5">{role}</p>
+                  <p className="font-bold text-white text-sm leading-tight">{name}</p>
+                  <p className="text-white/40 text-[11px] mt-0.5">{role}</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </motion.div>
     </section>
 
     {/* ===== PRICING ===== */}
-    <section className="px-4 md:px-5 py-14 md:py-32 bg-[#020817] text-white relative overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] md:w-[700px] h-[500px] md:h-[700px] bg-[#7C3AED]/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#F59E0B]/5 rounded-full blur-[120px] pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto relative z-10">
+    <section className="px-4 md:px-5 py-14 md:py-32 bg-transparent text-white relative overflow-hidden">
+      <motion.div
+        className="max-w-7xl mx-auto relative z-10"
+        variants={sectionContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={VIEWPORT}
+      >
         <div className="text-center mb-10 md:mb-20">
-          <div className="section-eyebrow bg-amber-500/10 border border-amber-500/20 text-amber-400 mb-4 mx-auto">
+          <motion.div variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }} className="section-eyebrow bg-amber-500/10 border border-amber-500/20 text-amber-400 mb-4 mx-auto">
             <span>💳</span> Тарифи
-          </div>
-          <h2 className="text-2xl md:text-5xl lg:text-6xl font-black tracking-tight">
-            Прозорий старт:
-            <br />
-            <span className="text-gradient-gold">жодних прихованих платежів</span>
-          </h2>
+          </motion.div>
+          <motion.h2
+              variants={fadeUp}
+              style={{ willChange: 'transform, opacity' }}
+              className="no-bg text-2xl md:text-5xl lg:text-6xl font-black tracking-tight"
+            >
+              {pricingHeadingStart}
+              <br />
+              <span className="text-gradient-gold">{pricingHeadingGradient}</span>
+            </motion.h2>
         </div>
 
-        <div className="max-w-lg mx-auto relative">
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#F59E0B]/15 to-[#2563EB]/15 blur-2xl scale-105 pointer-events-none" />
-          <div className="relative bg-[#0D1B2E] border border-white/10 rounded-2xl md:rounded-3xl p-7 md:p-12 shadow-[0_30px_80px_rgba(0,0,0,0.5)]">
+        <motion.div variants={cardRise} style={{ willChange: 'transform, opacity' }} className="max-w-lg mx-auto relative">
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#F59E0B]/12 to-[#2563EB]/12 blur-2xl scale-105 pointer-events-none" />
+          <div className="relative bg-white/[0.04] backdrop-blur-md border border-white/10 rounded-2xl md:rounded-3xl p-7 md:p-12">
             {/* Badge */}
             <div className="absolute -top-4 left-1/2 -translate-x-1/2">
               <div className="bg-gradient-to-r from-[#F59E0B] to-[#FBBF24] text-[#020817] text-xs font-black uppercase tracking-widest px-5 py-1.5 rounded-full shadow-lg shadow-amber-500/30">
@@ -870,20 +963,16 @@ const HomePage = () => {
               <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-[#F59E0B]/15 border border-[#F59E0B]/20 flex items-center justify-center shrink-0">
                 <span className="text-2xl md:text-3xl" role="img" aria-label="Card">💳</span>
               </div>
-              <h3 className="font-black text-lg md:text-2xl text-white">Первинна консультація та попередній аналіз документів</h3>
+              <h3 className="font-black text-lg md:text-2xl text-white">{pricingTitle}</h3>
             </div>
 
             <div className="mb-7 md:mb-10">
-              <span className="text-5xl md:text-7xl font-black text-gradient-gold">1000</span>
+              <span className="text-5xl md:text-7xl font-black text-gradient-gold">{pricingAmount}</span>
               <span className="text-2xl md:text-3xl text-white/40 font-bold ml-2">грн</span>
             </div>
 
             <ul className="space-y-4 md:space-y-5 mb-7 md:mb-10">
-              {[
-                { label: 'Аналіз документів', desc: 'Вивчаємо рапорти, договори чи рішення.' },
-                { label: 'Ідеальний матч', desc: 'Направляємо справу профільному юристу.' },
-                { label: 'Висновок у чаті', desc: 'Чітка відповідь щодо перспектив та кроків.' },
-              ].map(({ label, desc }) => (
+              {pricingFeatures.map(({ label, desc }) => (
                 <li key={label} className="flex items-start gap-3 md:gap-4">
                   <div className="w-6 h-6 rounded-full bg-[#2563EB]/20 flex items-center justify-center shrink-0 mt-0.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-[#3B82F6]" strokeWidth={2.5} />
@@ -896,68 +985,89 @@ const HomePage = () => {
             </ul>
 
             <p className="text-[11px] md:text-xs text-white/35 mb-7 md:mb-10 leading-relaxed">
-              Якщо знадобиться складання позовів чи супровід — фіксована ціна ДО початку роботи. Рішення завжди за вами.
+              {pricingDisclaimer}
             </p>
 
             <motion.a
-              href={BOT_LINK}
+              href={botLink}
               className="w-full bg-gradient-to-r from-[#2563EB] to-[#7C3AED] text-white font-black py-4 md:py-5 px-6 rounded-xl md:rounded-2xl shadow-[0_8px_32px_rgba(37,99,235,0.4)] flex items-center justify-center gap-2 md:gap-3 text-base md:text-xl active:scale-95 transition-transform"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.96 }}
               transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             >
-              Почати <ArrowRight className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5} />
+              {pricingCtaLabel} <ArrowRight className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5} />
             </motion.a>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
 
     {/* ===== FAQ ===== */}
-    <section id="faq" className="px-4 md:px-5 py-14 md:py-32 bg-[#F8FAFF]">
-      <div className="max-w-3xl mx-auto">
+    <section id="faq" className="px-4 md:px-5 py-14 md:py-32 bg-transparent">
+      <motion.div
+        className="max-w-3xl mx-auto"
+        variants={sectionContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={VIEWPORT}
+      >
         <div className="text-center mb-8 md:mb-16">
-          <div className="section-eyebrow bg-blue-50 text-[#2563EB] mb-4 mx-auto">
+          <motion.div variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }} className="section-eyebrow bg-white/10 border border-white/10 text-white/60 mb-4 mx-auto">
             <Search className="w-3.5 h-3.5" /> FAQ
-          </div>
-          <h2 className="text-2xl md:text-5xl font-black text-[#0D1B2E] tracking-tight">Залишилися запитання?</h2>
+          </motion.div>
+          <motion.h2
+              variants={fadeUp}
+              style={{ willChange: 'transform, opacity' }}
+              className="text-2xl md:text-5xl font-black text-white tracking-tight"
+            >
+              Залишилися запитання?
+            </motion.h2>
         </div>
         <div className="space-y-3 md:space-y-4">
-          {faqData.map((item, i) => (
-            <AccordionItem key={i} question={item.question} answer={item.answer} />
+          {activeFaq.map((item, i) => (
+            <motion.div key={item._id || i} variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }}>
+              <AccordionItem question={item.question} answer={item.answer} />
+            </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </section>
 
     {/* ===== FOOTER CTA ===== */}
-    <section className="px-4 md:px-5 pb-10 md:pb-32 bg-[#F8FAFF] text-center">
-      <div className="max-w-5xl mx-auto relative overflow-hidden bg-[#020817] rounded-2xl md:rounded-[40px] p-8 md:p-20 shadow-2xl">
-        <div className="absolute -top-32 -left-32 w-[400px] h-[400px] bg-[#2563EB]/15 rounded-full blur-[120px] pointer-events-none" style={{ WebkitTransform: 'translateZ(0)', transform: 'translateZ(0)', willChange: 'transform' }} />
-        <div className="absolute -bottom-32 -right-32 w-[350px] h-[350px] bg-[#7C3AED]/12 rounded-full blur-[100px] pointer-events-none" style={{ WebkitTransform: 'translateZ(0)', transform: 'translateZ(0)', willChange: 'transform' }} />
+    <section className="px-4 md:px-5 pb-10 md:pb-32 bg-transparent text-center">
+      <motion.div
+        className="max-w-5xl mx-auto relative overflow-hidden p-8 md:p-20"
+        variants={sectionContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={VIEWPORT}
+      >
         <div className="relative z-10">
-          <div className="w-14 h-14 md:w-20 md:h-20 bg-gradient-to-br from-[#2563EB] to-[#7C3AED] rounded-2xl md:rounded-3xl flex items-center justify-center mx-auto mb-5 md:mb-8 shadow-[0_8px_32px_rgba(37,99,235,0.4)]">
+          <motion.div variants={cardRise} style={{ willChange: 'transform, opacity' }} className="w-14 h-14 md:w-20 md:h-20 bg-gradient-to-br from-[#2563EB] to-[#7C3AED] rounded-2xl md:rounded-3xl flex items-center justify-center mx-auto mb-5 md:mb-8 shadow-[0_8px_32px_rgba(37,99,235,0.4)]">
             <MessageCircle className="w-7 h-7 md:w-10 md:h-10 text-white" strokeWidth={2} />
-          </div>
-          <h2 className="text-xl md:text-5xl font-black mb-3 md:mb-6 text-white tracking-tight">
-            Юридична підтримка —
-            <br className="hidden md:block" />
-            {' '}в одному кліку
-          </h2>
-          <p className="text-sm md:text-xl text-white/50 mb-7 md:mb-10 max-w-2xl mx-auto leading-relaxed">
-            Не відкладайте на потім. Відкрийте чат, опишіть ситуацію і отримайте план дій вже сьогодні.
-          </p>
+          </motion.div>
+          <motion.h2
+              variants={fadeUp}
+              style={{ willChange: 'transform, opacity' }}
+              className="text-xl md:text-5xl font-black mb-3 md:mb-6 text-white tracking-tight"
+            >
+              {activeFooterCta.heading}
+            </motion.h2>
+          <motion.p variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }} className="text-sm md:text-xl text-white/50 mb-7 md:mb-10 max-w-2xl mx-auto leading-relaxed">
+            {activeFooterCta.subtitle}
+          </motion.p>
           <motion.a
-            href={BOT_LINK}
+            href={botLink}
+            variants={fadeUpSoft}
             className="inline-flex bg-gradient-to-r from-[#2563EB] to-[#7C3AED] text-white font-black py-4 px-8 md:py-5 md:px-12 rounded-xl md:rounded-2xl shadow-[0_8px_32px_rgba(37,99,235,0.45)] items-center justify-center gap-2 md:gap-3 text-base md:text-xl active:scale-95 transition-transform"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.96 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+            style={{ willChange: 'transform, opacity' }}
           >
-            Чат з юристом <ArrowRight className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5} />
+            {activeFooterCta.buttonLabel} <ArrowRight className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5} />
           </motion.a>
         </div>
-      </div>
+      </motion.div>
     </section>
   </>
   );
@@ -990,7 +1100,8 @@ const AppLayout = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen text-[#0D1B2E] font-sans overflow-x-hidden pt-[56px] md:pt-[72px] pb-[72px] md:pb-0">
+    <div className="min-h-screen text-white font-sans overflow-x-hidden pt-[56px] md:pt-[72px] pb-[72px] md:pb-0">
+      <IntroOverlay />
       <NavigationHeader />
       <main className="w-full">
         <Suspense fallback={<PageFallback />}>

@@ -1,0 +1,17 @@
+{
+  "name": "legalclick-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "start": "sanity start",
+    "seed": "node scripts/seed.mjs"
+  },
+  "dependencies": {
+    "@sanity/presentation": "^2.0.0",
+    "sanity": "^3.60.0",
+    "styled-components": "^6.1.15"
+  }
+}
