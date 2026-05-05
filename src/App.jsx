@@ -156,7 +156,7 @@ const ChatCarousel = memo(() => {
           transition={{ duration: 0.38, ease: 'easeInOut' }}
           className="bg-[#2563EB] text-white rounded-xl p-3 shadow-sm ml-4"
         >
-          <p className="text-[11px] leading-relaxed">{clientMessages[idx]}</p>
+          <p className="text-[11.5px] leading-relaxed">{clientMessages[idx]}</p>
           <span className="text-[9px] opacity-60 block text-right mt-1">19:03</span>
         </motion.div>
       </AnimatePresence>
@@ -620,13 +620,13 @@ const HomePage = () => {
                     </div>
                     <span className="text-[9px] text-gray-400 ml-auto">19:02</span>
                   </div>
-                  <p className="text-[11px] bg-gray-100 p-2.5 rounded-xl rounded-tl-none leading-relaxed text-[#0D1B2E]">
+                  <p className="text-[11.5px] bg-gray-100 p-2.5 rounded-xl rounded-tl-none leading-relaxed text-[#0D1B2E]">
                     Вітаю! Опишіть вашу ситуацію 👇
                   </p>
                 </div>
                 <ChatCarousel />
                 <div className="bg-white rounded-xl p-3 shadow-sm border border-blue-100 shrink-0">
-                  <p className="text-[11px] leading-relaxed text-[#0D1B2E]">✅ Матеріали отримано. Юрист аналізує...</p>
+                  <p className="text-[11.5px] leading-relaxed text-[#0D1B2E]">✅ Матеріали отримано. Юрист аналізує...</p>
                 </div>
               </div>
             </div>
