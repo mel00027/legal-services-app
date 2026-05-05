@@ -461,7 +461,7 @@ const HomePage = () => {
   const pricingCtaLabel = cmsSite?.pricingCtaLabel || 'Почати';
   const pricingFeatures = cmsSite?.pricingFeatures || [
     { label: 'Аналіз документів', desc: 'Вивчаємо рапорти, договори чи рішення.' },
-    { label: 'Ідеальний матч', desc: 'Направляємо справу профільному юристу.' },
+    { label: 'Підбір юриста', desc: 'Направляємо справу профільному юристу.' },
     { label: 'Висновок у чаті', desc: 'Чітка відповідь щодо перспектив та кроків.' },
   ];
 
