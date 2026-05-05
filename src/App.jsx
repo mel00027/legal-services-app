@@ -109,7 +109,7 @@ const faqData = [
 ];
 
 const serviceItems = [
-  { name: 'Захист прав військовослужбовців', icon: ShieldCheck, path: '/military-lawyer', color: 'from-blue-600 to-indigo-600' },
+  { name: 'Військові: ВЛК, бойові, рапорти, поранення', icon: ShieldCheck, path: '/military-lawyer', color: 'from-blue-600 to-indigo-600' },
   { name: 'Житлове право', icon: Home, path: '/housing-law', color: 'from-emerald-500 to-teal-600' },
   { name: 'Адміністративні правопорушення', icon: Scale, path: '/administrative-offences', color: 'from-violet-500 to-purple-600' },
 ];
@@ -425,9 +425,9 @@ const HomePage = () => {
 
   // CMS-driven values with hardcoded fallbacks
   const hero = cmsHome?.hero || {};
-  const heroTitleStart = hero.titleStart || 'Юрист у твоєму';
-  const heroTitleGradient = hero.titleGradient || 'смартфоні';
-  const heroSubtitle = hero.subtitle || 'Рапорти, виплати та житлові суперечки. Все онлайн. Описуєш ситуацію в чаті — отримуєш результат.';
+  const heroTitleStart = hero.titleStart || 'Юрист для військових і їхніх родин — у';
+  const heroTitleGradient = hero.titleGradient || 'Telegram';
+  const heroSubtitle = hero.subtitle || 'ВЛК, бойові, рапорти, поранення, житло, штрафи. Опишіть ситуацію в чаті — за 20-30 хв юрист скаже, чи є шанс і що робити далі.';
   const heroCtaLabel = hero.ctaLabel || 'Отримати допомогу в чаті';
   const heroSecondaryCtaLabel = hero.secondaryCtaLabel || 'Як це працює';
 

@@ -56,9 +56,9 @@ export const MilitaryLawyer = () => {
   // CMS data with fallbacks
   const hero = cms?.hero || {};
   const badgeText = hero.badge || 'Захист прав військовослужбовців та звільнених у запас';
-  const titleStart = hero.titleStart || 'Юридичний захист';
-  const titleGradient = hero.titleGradient || 'військовослужбовців';
-  const titleEnd = hero.titleEnd || 'та їхніх родин';
+  const titleStart = hero.titleStart || 'Оскарження ВЛК, стягнення бойових';
+  const titleGradient = hero.titleGradient || 'і виплат за поранення';
+  const titleEnd = hero.titleEnd || '— онлайн, без офісу';
   const heroSubtitle = hero.subtitle || 'Професійна допомога у вирішенні спорів із командуванням, ВЛК та державними органами. Працюємо на результат.';
   const ctaLabel = hero.ctaLabel || 'Отримати консультацію';
 
