@@ -428,7 +428,7 @@ const HomePage = () => {
   const hero = cmsHome?.hero || {};
   const heroTitleStart = hero.titleStart || 'Юрист у твоєму';
   const heroTitleGradient = hero.titleGradient || 'смартфоні';
-  const heroSubtitle = hero.subtitle || 'ВЛК, бойові, рапорти, поранення, житло, штрафи. Опишіть ситуацію в чаті — за 20-30 хв юрист скаже, чи є шанс і що робити далі.';
+  const heroSubtitle = hero.subtitle || 'ВЛК, бойові, рапорти, поранення, житло, штрафи. Опишіть ситуацію в чаті — за 20-30 хв юрист скаже, що робити далі.';
   const heroCtaLabel = hero.ctaLabel || 'Отримати допомогу в чаті';
   const heroSecondaryCtaLabel = hero.secondaryCtaLabel || 'Як це працює';
 
@@ -769,7 +769,7 @@ const HomePage = () => {
           {[
             { n: '1', title: 'Обираєте послугу', desc: 'Натисніть потрібний напрямок у боті. Не впевнені? Тисніть «Інше», і ми зорієнтуємо!', accent: false },
             { n: '2', title: 'Пишете в чат', desc: 'Опишіть ситуацію та додайте фото. Юрист вже вивчає документи і будує стратегію.', accent: false },
-            { n: '3', title: 'Отримуєте рішення', desc: 'В смартфон надходить покроковий план або готові документи. Все зрозумілою мовою.', accent: true },
+            { n: '3', title: 'Отримуєте готовий документ', desc: 'Юрист надсилає документ і інструкцію — куди, як і кому подати. Підписуєте та відправляєте від свого імені.', accent: true },
           ].map(({ n, title, desc, accent }) => (
             <motion.div key={n} variants={cardRise} style={{ willChange: 'transform, opacity' }} className="text-center">
               <div
@@ -792,7 +792,7 @@ const HomePage = () => {
           {[
             { n: '1', title: 'Обираєте послугу', desc: 'Просто натисніть потрібний напрямок у боті. Тисніть «Інше», і ми миттєво зорієнтуємо!', accent: false },
             { n: '2', title: 'Пишете в чат', desc: 'Опишіть ситуацію та додайте фото документів. Юрист вже будує правову стратегію.', accent: false },
-            { n: '3', title: 'Отримуєте рішення', desc: 'Ви отримаєте план дій або готові документи. Проблема вирішена 100% онлайн.', accent: true },
+            { n: '3', title: 'Отримуєте готовий документ', desc: 'Юрист надсилає вам готовий документ і чітку інструкцію — куди, як і кому його подати. Ви підписуєте та відправляєте від свого імені.', accent: true },
           ].map(({ n, title, desc, accent }) => (
             <motion.div key={n} variants={cardRise} style={{ willChange: 'transform, opacity' }} className="relative z-10 text-center">
               <div
