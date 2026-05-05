@@ -38,7 +38,6 @@ const services = [
   { title: "Переведення та рапорти", desc: "Оскарження відмов у переведенні до іншої частини.", icon: MoveRight, color: "from-orange-500 to-red-500" },
   { title: "Виплати та забезпечення", desc: "Стягнення недоплачених коштів, «бойових» та виплати 1 млн грн.", icon: Landmark, color: "from-amber-500 to-yellow-500" },
   { title: "Сімейні справи", desc: "Виплати загиблим. Встановлення факту проживання однією сім'єю.", icon: Users, color: "from-pink-500 to-rose-600" },
-  { title: "Моральна шкода", desc: "Відшкодування за незаконні дії чи бездіяльність командування.", icon: HandHeart, color: "from-cyan-500 to-blue-500" },
 ];
 
 const stats = [
