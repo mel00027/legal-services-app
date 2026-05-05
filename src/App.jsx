@@ -842,30 +842,6 @@ const HomePage = () => {
           ))}
         </div>
 
-        <motion.div variants={fadeUp} style={{ willChange: 'transform, opacity' }} className="max-w-2xl mx-auto bg-white/[0.04] backdrop-blur-sm p-5 md:p-8 rounded-2xl md:rounded-3xl border border-white/[0.08]">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#2563EB] to-[#7C3AED] flex items-center justify-center text-white font-black shrink-0">
-              L
-            </div>
-            <div>
-              <h4 className="font-black text-white text-sm md:text-base leading-none">{activeTrust.authorName}</h4>
-              <div className="flex items-center gap-1 mt-1">
-                <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                <p className="text-[10px] md:text-xs text-green-500 font-medium">Онлайн</p>
-              </div>
-            </div>
-          </div>
-          <div className="space-y-3">
-            <div className="bg-white/[0.07] p-4 rounded-2xl rounded-tl-none text-[13px] md:text-sm text-white/80 leading-relaxed border border-white/[0.08]">
-              «{activeTrust.quote}»
-            </div>
-            <div className="bg-[#2563EB] p-4 rounded-2xl rounded-tl-none shadow-sm text-[13px] md:text-sm text-white leading-relaxed space-y-1">
-              {activeTrust.reply.map((line, i) => (
-                <p key={i}>{line}</p>
-              ))}
-            </div>
-          </div>
-        </motion.div>
       </motion.div>
     </section>
 
