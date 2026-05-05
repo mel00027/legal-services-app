@@ -425,8 +425,8 @@ const HomePage = () => {
 
   // CMS-driven values with hardcoded fallbacks
   const hero = cmsHome?.hero || {};
-  const heroTitleStart = hero.titleStart || 'Юрист для військових і їхніх родин — у';
-  const heroTitleGradient = hero.titleGradient || 'Telegram';
+  const heroTitleStart = hero.titleStart || 'Юрист у твоєму';
+  const heroTitleGradient = hero.titleGradient || 'смартфоні';
   const heroSubtitle = hero.subtitle || 'ВЛК, бойові, рапорти, поранення, житло, штрафи. Опишіть ситуацію в чаті — за 20-30 хв юрист скаже, чи є шанс і що робити далі.';
   const heroCtaLabel = hero.ctaLabel || 'Отримати допомогу в чаті';
   const heroSecondaryCtaLabel = hero.secondaryCtaLabel || 'Як це працює';
