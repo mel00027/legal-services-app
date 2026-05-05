@@ -319,6 +319,7 @@ const NavigationHeader = () => {
             { label: 'Головна', id: 'home' },
             { label: 'Послуги', id: 'services' },
             { label: 'Як це працює', id: 'about' },
+            { label: 'Ціни', id: 'pricing' },
             { label: 'FAQ', id: 'faq' },
           ].map(({ label, id }) => (
             <a key={id} href={`/#${id === 'home' ? '' : id}`} onClick={(e) => handleNavClick(e, id)} className="hover:text-white transition-colors">
@@ -902,7 +903,7 @@ const HomePage = () => {
     </section>
 
     {/* ===== PRICING ===== */}
-    <section className="px-4 md:px-5 py-14 md:py-32 bg-transparent text-white relative overflow-hidden">
+    <section id="pricing" className="px-4 md:px-5 py-14 md:py-32 bg-transparent text-white relative overflow-hidden">
       <motion.div
         className="max-w-7xl mx-auto relative z-10"
         variants={sectionContainer}
