@@ -636,7 +636,7 @@ const HomePage = () => {
     </section>
 
     {/* ===== ADVANTAGES ===== */}
-    <section id="why-us" className="px-4 md:px-5 py-14 md:py-32 bg-transparent overflow-hidden">
+    <section id="why-us" className="px-4 md:px-5 py-14 md:py-32 bg-transparent overflow-x-hidden">
       <motion.div
         className="max-w-7xl mx-auto"
         variants={sectionContainer}
@@ -657,7 +657,7 @@ const HomePage = () => {
             </motion.h2>
         </div>
 
-        <div className="flex gap-4 md:grid md:grid-cols-3 md:gap-6 overflow-x-auto no-scrollbar scroll-touch pb-4 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory">
+        <div className="flex gap-4 md:grid md:grid-cols-3 md:gap-6 overflow-x-auto md:overflow-visible no-scrollbar scroll-touch pb-4 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory">
           {[
             {
               Icon: MessageCircle,
