@@ -109,7 +109,7 @@ const faqData = [
 ];
 
 const serviceItems = [
-  { name: 'Військові: ВЛК, бойові, рапорти, поранення', icon: ShieldCheck, path: '/military-lawyer', color: 'from-blue-600 to-indigo-600' },
+  { name: 'Захист прав військовослужбовців', icon: ShieldCheck, path: '/military-lawyer', color: 'from-blue-600 to-indigo-600' },
   { name: 'Житлове право', icon: Home, path: '/housing-law', color: 'from-emerald-500 to-teal-600' },
   { name: 'Адміністративні правопорушення', icon: Scale, path: '/administrative-offences', color: 'from-violet-500 to-purple-600' },
 ];
