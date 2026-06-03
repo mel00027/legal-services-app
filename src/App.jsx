@@ -713,8 +713,8 @@ const HomePage = () => {
         whileInView="visible"
         viewport={VIEWPORT}
       >
-        <div className="mb-8 md:mb-14">
-          <motion.div variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }} className="section-eyebrow bg-white/10 border border-white/10 text-white/60 mb-4">
+        <div className="text-center mb-8 md:mb-14">
+          <motion.div variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }} className="section-eyebrow bg-white/10 border border-white/10 text-white/60 mb-4 mx-auto">
             <Scale className="w-3.5 h-3.5" /> Напрямки
           </motion.div>
           <motion.h2
@@ -728,7 +728,7 @@ const HomePage = () => {
             Легке розв'язання складних питань
           </motion.p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-5xl mx-auto">
           {serviceItems.map((item, i) => (
             <motion.div key={i} variants={cardRise} style={{ willChange: 'transform, opacity' }}>
               <ServiceCard {...item} />
