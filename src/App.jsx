@@ -669,7 +669,7 @@ const HomePage = () => {
               key={i}
               variants={cardRise}
               style={{ willChange: 'transform, opacity' }}
-              className="min-w-[270px] md:min-w-0 md:w-full bg-white/[0.04] backdrop-blur-sm rounded-2xl md:rounded-3xl p-6 md:p-8 snap-center shrink-0 hover:bg-white/[0.07] md:transition-all md:duration-300 md:hover:-translate-y-2 border border-white/[0.08] group"
+              className="w-[85vw] max-w-[300px] md:max-w-none md:w-full bg-white/[0.04] backdrop-blur-sm rounded-2xl md:rounded-3xl p-6 md:p-8 snap-center shrink-0 hover:bg-white/[0.07] md:transition-all md:duration-300 md:hover:-translate-y-2 border border-white/[0.08] group"
             >
               <div
                 className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}
