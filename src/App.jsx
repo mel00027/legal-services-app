@@ -424,7 +424,7 @@ const HomePage = () => {
   const hero = cmsHome?.hero || {};
   const heroTitleStart = hero.titleStart || 'Юрист у твоєму';
   const heroTitleGradient = hero.titleGradient || 'смартфоні';
-  const heroSubtitle = hero.subtitle || 'Команда колишніх юристів військових частин ЗСУ. Знаємо систему зсередини і використовуємо цей досвід для вас. Повністю готуємо всі документи від заяви до позову, а ви відправляєте їх за інструкцією.';
+  const heroSubtitle = hero.subtitle || 'ВЛК, мобілізація, виплати, рапорти, штрафи. Опишіть ситуацію в чаті — і ми надамо чіткий план дій.';
   const heroCtaLabel = hero.ctaLabel || 'Отримати допомогу в чаті';
   const heroSecondaryCtaLabel = hero.secondaryCtaLabel || 'Як це працює';
 
@@ -591,42 +591,64 @@ const HomePage = () => {
           </motion.div>
         </div>
 
-        {/* ── Right: phone mockup (desktop only) ── */}
+        {/* ── Right: expertise card ── */}
         <motion.div
-          variants={{ hidden: { opacity: 0, scale: 0.85, y: 60 }, visible: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 60, damping: 22, mass: 1.2 } } }}
-          style={{ willChange: 'transform, opacity' }}
-          className="hidden md:flex flex-1 justify-center lg:justify-end relative"
+          variants={{ hidden: { opacity: 0, x: 40 }, visible: { opacity: 1, x: 0, transition: { duration: 1.0, ease: [0.22, 1, 0.36, 1] } } }}
+          className="hidden md:flex flex-1 relative mt-10 md:mt-0 justify-end"
         >
-          <div className="relative w-[300px] lg:w-[320px]">
-            <div className="w-full bg-[#0D1B2E] rounded-[44px] p-3 shadow-[0_40px_120px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.06)] border border-white/5">
-              {/* Notch */}
-              <div className="absolute top-3.5 left-1/2 -translate-x-1/2 w-28 h-6 bg-[#020817] rounded-b-3xl z-20" />
-              {/* Screen */}
-              <div className="w-full bg-[#F8FAFF] rounded-[32px] overflow-hidden flex flex-col pt-12 px-3 gap-3 pb-6 min-h-[580px]">
-                <div className="bg-white rounded-xl p-3 shadow-sm shrink-0 border border-gray-100">
-                  <div className="flex gap-2 items-center mb-2">
-                    <div className="w-7 h-7 bg-gradient-to-br from-[#2563EB] to-[#7C3AED] rounded-full text-white text-[10px] flex items-center justify-center font-black">
-                      L
-                    </div>
-                    <div>
-                      <span className="text-[12px] font-bold text-[#0D1B2E] block leading-none">LegalClick</span>
-                      <div className="flex items-center gap-1 mt-0.5">
-                        <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                        <span className="text-[9px] text-green-500 font-medium">Онлайн</span>
-                      </div>
-                    </div>
-                    <span className="text-[9px] text-gray-400 ml-auto">19:02</span>
-                  </div>
-                  <p className="text-[11.5px] bg-gray-100 p-2.5 rounded-xl rounded-tl-none leading-relaxed text-[#0D1B2E]">
-                    Вітаю! Опишіть вашу ситуацію 👇
-                  </p>
+          <div className="relative w-full max-w-lg lg:ml-auto lg:mr-0">
+            {/* Background glow */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#2563EB]/30 to-[#7C3AED]/30 blur-3xl rounded-full" />
+            
+            {/* Main glass card */}
+            <div className="relative bg-white/[0.04] backdrop-blur-xl border border-white/10 p-8 md:p-10 rounded-[2.5rem] shadow-2xl overflow-hidden group">
+              {/* Subtle top edge highlight */}
+              <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#2563EB]/50 to-transparent opacity-50" />
+              
+              <div className="flex items-center gap-5 mb-8">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#7C3AED] flex items-center justify-center shadow-[0_0_30px_rgba(37,99,235,0.3)]">
+                  <ShieldCheck className="w-7 h-7 text-white" />
                 </div>
-                <ChatCarousel />
-                <div className="bg-white rounded-xl p-3 shadow-sm border border-blue-100 shrink-0">
-                  <p className="text-[11.5px] leading-relaxed text-[#0D1B2E]">✅ Матеріали отримано. Юрист аналізує...</p>
+                <div>
+                  <h3 className="text-xl md:text-2xl font-black text-white leading-tight">
+                    Експертиза
+                    <span className="block text-gradient-blue">зсередини системи</span>
+                  </h3>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <p className="text-lg md:text-xl text-white/90 leading-relaxed font-medium">
+                  Ми — команда <strong className="text-white">колишніх юристів військових частин ЗСУ</strong>. Знаємо систему зсередини і використовуємо цей досвід для вас.
+                </p>
+                
+                <div className="h-[1px] w-full bg-white/10" />
+                
+                <div className="flex gap-4 items-start">
+                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 mt-1">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <p className="text-base md:text-lg text-white/70 leading-relaxed">
+                    Повністю готуємо <strong className="text-white">всі документи від заяви до позову</strong>, а ви просто відправляєте їх за інструкцією.
+                  </p>
                 </div>
               </div>
             </div>
+
+            {/* Floating badge */}
+            <motion.div 
+               animate={{ y: [0, -10, 0] }} 
+               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+               className="absolute -bottom-6 -left-6 lg:-left-10 bg-[#020817]/90 backdrop-blur-xl border border-white/10 p-4 lg:p-5 rounded-2xl flex items-center gap-3 shadow-2xl"
+            >
+              <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-amber-500/20 flex items-center justify-center">
+                <Star className="w-5 h-5 lg:w-6 lg:h-6 text-amber-400 fill-amber-400" />
+              </div>
+              <div>
+                <div className="text-white font-bold text-sm lg:text-base">Діємо на випередження</div>
+                <div className="text-white/50 text-xs lg:text-sm">Без адвокатів-посередників</div>
+              </div>
+            </motion.div>
           </div>
         </motion.div>
       </motion.div>
