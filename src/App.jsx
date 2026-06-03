@@ -422,8 +422,8 @@ const HomePage = () => {
 
   // CMS-driven values with hardcoded fallbacks
   const hero = cmsHome?.hero || {};
-  const heroTitleStart = hero.titleStart || 'Юрист у твоєму';
-  const heroTitleGradient = hero.titleGradient || 'смартфоні';
+  const heroTitleStart = hero.titleStart || 'Юридичний захист';
+  const heroTitleGradient = hero.titleGradient || 'онлайн';
   const heroSubtitle = hero.subtitle || 'ВЛК, мобілізація, виплати, рапорти, штрафи. Опишіть ситуацію в чаті — і ми надамо чіткий план дій.';
   const heroCtaLabel = hero.ctaLabel || 'Отримати допомогу в чаті';
   const heroSecondaryCtaLabel = hero.secondaryCtaLabel || 'Як це працює';
@@ -572,42 +572,42 @@ const HomePage = () => {
 
         {/* ── Right: expertise card ── */}
         <motion.div
-          variants={{ hidden: { opacity: 0, x: 40 }, visible: { opacity: 1, x: 0, transition: { duration: 1.0, ease: [0.22, 1, 0.36, 1] } } }}
-          className="flex w-full md:flex-1 relative mt-10 md:mt-0 justify-center md:justify-end"
+          variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 1.0, ease: [0.22, 1, 0.36, 1] } } }}
+          className="flex w-full md:flex-1 relative justify-center md:justify-end mt-6 md:mt-0"
         >
           <div className="relative w-full max-w-lg lg:ml-auto lg:mr-0">
             {/* Background glow */}
             <div className="absolute inset-0 bg-gradient-to-br from-[#2563EB]/30 to-[#7C3AED]/30 blur-3xl rounded-full" />
             
             {/* Main glass card */}
-            <div className="relative bg-white/[0.04] backdrop-blur-xl border border-white/10 p-8 md:p-10 rounded-[2.5rem] shadow-2xl overflow-hidden group">
+            <div className="relative bg-white/[0.04] backdrop-blur-xl border border-white/10 p-6 sm:p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl overflow-hidden group">
               {/* Subtle top edge highlight */}
               <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#2563EB]/50 to-transparent opacity-50" />
               
-              <div className="flex items-center gap-5 mb-8">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#7C3AED] flex items-center justify-center shadow-[0_0_30px_rgba(37,99,235,0.3)]">
-                  <ShieldCheck className="w-7 h-7 text-white" />
+              <div className="flex items-center gap-4 md:gap-5 mb-6 md:mb-8">
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-[1rem] md:rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#7C3AED] flex items-center justify-center shadow-[0_0_30px_rgba(37,99,235,0.3)] shrink-0">
+                  <ShieldCheck className="w-6 h-6 md:w-7 md:h-7 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl md:text-2xl font-black text-white leading-tight">
+                  <h3 className="text-lg md:text-2xl font-black text-white leading-tight">
                     Експертиза
                     <span className="block text-gradient-blue">зсередини системи</span>
                   </h3>
                 </div>
               </div>
 
-              <div className="space-y-6">
-                <p className="text-lg md:text-xl text-white/90 leading-relaxed font-medium">
+              <div className="space-y-5 md:space-y-6">
+                <p className="text-[15px] md:text-xl text-white/90 leading-relaxed font-medium">
                   Ми — команда <strong className="text-white">колишніх юристів військових частин ЗСУ</strong>. Знаємо систему зсередини і використовуємо цей досвід для вас.
                 </p>
                 
                 <div className="h-[1px] w-full bg-white/10" />
                 
-                <div className="flex gap-4 items-start">
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 mt-1">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                <div className="flex gap-3 md:gap-4 items-start">
+                  <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5 md:mt-1">
+                    <CheckCircle2 className="w-4 h-4 md:w-5 md:h-5 text-emerald-400" />
                   </div>
-                  <p className="text-base md:text-lg text-white/70 leading-relaxed">
+                  <p className="text-sm md:text-lg text-white/70 leading-relaxed">
                     Повністю готуємо <strong className="text-white">всі документи від заяви до позову</strong>, а ви просто відправляєте їх за інструкцією.
                   </p>
                 </div>
@@ -1042,7 +1042,7 @@ const AppLayout = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     if (location.pathname === '/') {
-      document.title = 'LegalClick — Юрист у твоєму смартфоні';
+      document.title = 'LegalClick — Юридичний захист онлайн';
     }
     if (location.pathname !== '/') return;
 
