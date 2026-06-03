@@ -702,18 +702,15 @@ const HomePage = () => {
       >
         <div className="text-center mb-8 md:mb-14">
           <motion.div variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }} className="section-eyebrow bg-white/10 border border-white/10 text-white/60 mb-4 mx-auto">
-            <Scale className="w-3.5 h-3.5" /> Напрямки
+            <Scale className="w-3.5 h-3.5" /> Послуги
           </motion.div>
           <motion.h2
             variants={fadeUp}
             style={{ willChange: 'transform, opacity' }}
-            className="text-2xl md:text-5xl font-black text-white tracking-tight mb-2 md:mb-4"
+            className="text-2xl md:text-5xl font-black text-white tracking-tight"
           >
-            Напрямки послуг
+            Послуги
           </motion.h2>
-          <motion.p variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }} className="text-white/50 text-sm md:text-xl">
-            Легке розв'язання складних питань
-          </motion.p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-5xl mx-auto">
           {serviceItems.map((item, i) => (

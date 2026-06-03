@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   ShieldAlert, UserCheck, FileText, MoveRight,
-  Landmark, ShieldCheck, ScrollText, Users, HandHeart,
+  Landmark, ShieldCheck, Users, HandHeart,
   MessageCircle, ArrowRight, CheckCircle2
 } from 'lucide-react';
 import { useSanityQuery } from '../sanity/useSanity.js';
@@ -66,7 +66,7 @@ export const MilitaryLawyer = () => {
     ...s, icon: getIcon(s.iconName), color: s.gradient,
   })) : services;
   const activeStats = cms?.stats || stats;
-  const activeExpertise = cms?.expertise || { heading: 'Експертність без канцеляризмів', description: 'Ми говоримо з вами зрозумілою людяною мовою, проте досконало знаємо всі тонкощі армійських статутів, бюрократичних процедур та законів України. Не витрачайте час на спроби самостійно розібратися у складнощах системи — довірте це професіоналам.' };
+
   const activeFooterCta = cms?.footerCta || { heading: 'Юридична підтримка — в одному кліку', subtitle: 'Не відкладайте на потім. Відкрийте чат, опишіть ситуацію і отримайте план дій вже сьогодні.', buttonLabel: 'Чат з юристом' };
   const seo = cms?.seo || { title: 'Юридична допомога військовим — Оскарження ВЛК, виплати, звільнення', description: 'Професійні послуги військового юриста. Допомога при оскарженні ВЛК, отриманні виплат та звільненні зі служби.' };
 
@@ -144,32 +144,8 @@ export const MilitaryLawyer = () => {
         </motion.div>
       </section>
 
-      {/* ===== EXPERTISE ===== */}
-      <section className="px-5 py-14 md:py-24 bg-transparent">
-        <motion.div
-          className="max-w-4xl mx-auto text-center"
-          variants={sectionContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={VIEWPORT}
-        >
-          <motion.div variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }}
-            className="w-16 h-16 bg-gradient-to-br from-[#2563EB] to-[#7C3AED] rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-500/20"
-          >
-            <ScrollText className="w-8 h-8 text-white" />
-          </motion.div>
-          <motion.h2 variants={fadeUp} style={{ willChange: 'transform, opacity' }}
-            className="text-2xl md:text-5xl font-black mb-6 text-white tracking-tight"
-          >
-            {activeExpertise.heading}
-          </motion.h2>
-          <motion.p variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }}
-            className="text-white/55 text-base md:text-xl leading-relaxed max-w-3xl mx-auto"
-          >
-            {activeExpertise.description}
-          </motion.p>
-        </motion.div>
-      </section>
+
+
 
       {/* ===== SERVICES GRID ===== */}
       <section className="px-4 md:px-5 py-14 md:py-28 bg-transparent">
