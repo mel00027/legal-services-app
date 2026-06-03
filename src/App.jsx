@@ -422,8 +422,8 @@ const HomePage = () => {
 
   // CMS-driven values with hardcoded fallbacks
   const hero = cmsHome?.hero || {};
-  const heroTitleStart = hero.titleStart || 'Юридичний захист';
-  const heroTitleGradient = hero.titleGradient || 'онлайн';
+  const heroTitleStart = hero.titleStart || 'Юрист у твоєму';
+  const heroTitleGradient = hero.titleGradient || 'смартфоні';
   const heroSubtitle = hero.subtitle || 'ВЛК, мобілізація, виплати, рапорти, штрафи. Опишіть ситуацію в чаті — і ми надамо чіткий план дій.';
   const heroCtaLabel = hero.ctaLabel || 'Отримати допомогу в чаті';
   const heroSecondaryCtaLabel = hero.secondaryCtaLabel || 'Як це працює';
@@ -1042,7 +1042,7 @@ const AppLayout = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     if (location.pathname === '/') {
-      document.title = 'LegalClick — Юридичний захист онлайн';
+      document.title = 'LegalClick — Юрист у твоєму смартфоні';
     }
     if (location.pathname !== '/') return;
 
