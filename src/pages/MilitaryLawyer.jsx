@@ -63,9 +63,9 @@ export const MilitaryLawyer = () => {
   const heroSubtitle = hero.subtitle || 'Професійна допомога у вирішенні спорів із командуванням, ВЛК та державними органами. Працюємо на результат.';
   const ctaLabel = hero.ctaLabel || 'Отримати консультацію';
 
-  const activeServices = cms?.services?.length ? cms.services.map((s) => ({
+  const activeServices = (cms?.services?.length ? cms.services.map((s) => ({
     ...s, icon: getIcon(s.iconName), color: s.gradient,
-  })) : services;
+  })) : services).filter(s => !s.title?.toLowerCase().includes('житлов'));
   const activeStats = cms?.stats || stats;
 
   const activeFooterCta = cms?.footerCta || { heading: 'Юридична підтримка — в одному кліку', subtitle: 'Не відкладайте на потім. Відкрийте чат, опишіть ситуацію і отримайте план дій вже сьогодні.', buttonLabel: 'Чат з юристом' };

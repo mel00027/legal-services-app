@@ -429,7 +429,7 @@ const HomePage = () => {
   const heroSecondaryCtaLabel = hero.secondaryCtaLabel || 'Як це працює';
 
   const activeMessages = (cmsHome?.chatMessages?.length ? cmsHome.chatMessages.map((m) => m.text) : null) || clientMessages;
-  const activeServiceCards = cmsHome?.serviceCards || serviceItems;
+  const activeServiceCards = (cmsHome?.serviceCards || serviceItems).filter(item => !item.name?.toLowerCase().includes('житлов'));
   const activeAdvantages = cmsHome?.advantages || null;
   const activeHowItWorks = cmsHome?.howItWorks || null;
   const activeStats = cmsHome?.stats || [
