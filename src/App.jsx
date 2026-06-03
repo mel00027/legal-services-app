@@ -567,34 +567,13 @@ const HomePage = () => {
             </button>
           </motion.div>
 
-          {/* ── Mobile chat preview (inline, not absolute) ── */}
-          <motion.div
-            variants={{ hidden: { opacity: 0, y: 32, filter: 'blur(6px)' }, visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 1.0, ease: [0.22, 1, 0.36, 1] } } }}
-            style={{ willChange: 'transform, opacity' }}
-            className="md:hidden mt-8 bg-white/8 backdrop-blur-md border border-white/10 rounded-2xl p-4"
-          >
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#2563EB] to-[#7C3AED] flex items-center justify-center text-white font-black text-sm">
-                L
-              </div>
-              <div>
-                <p className="font-bold text-sm text-white leading-none">LegalClick</p>
-                <div className="flex items-center gap-1 mt-0.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                  <span className="text-[10px] text-green-400">Онлайн</span>
-                </div>
-              </div>
-            </div>
-            <div className="bg-white/10 p-3 rounded-xl rounded-tl-none text-[12px] text-white/80 leading-relaxed">
-              Вітаю! Опишіть вашу ситуацію текстом 👇
-            </div>
-          </motion.div>
+
         </div>
 
         {/* ── Right: expertise card ── */}
         <motion.div
           variants={{ hidden: { opacity: 0, x: 40 }, visible: { opacity: 1, x: 0, transition: { duration: 1.0, ease: [0.22, 1, 0.36, 1] } } }}
-          className="hidden md:flex flex-1 relative mt-10 md:mt-0 justify-end"
+          className="flex w-full md:flex-1 relative mt-10 md:mt-0 justify-center md:justify-end"
         >
           <div className="relative w-full max-w-lg lg:ml-auto lg:mr-0">
             {/* Background glow */}
