@@ -61,9 +61,6 @@ const IntroOverlay = () => {
 const MilitaryLawyer = lazy(() =>
   import('./pages/MilitaryLawyer').then((m) => ({ default: m.MilitaryLawyer }))
 );
-const HousingLaw = lazy(() =>
-  import('./pages/HousingLaw').then((m) => ({ default: m.HousingLaw }))
-);
 const AdministrativeOffences = lazy(() =>
   import('./pages/AdministrativeOffences').then((m) => ({
     default: m.AdministrativeOffences,
@@ -110,7 +107,6 @@ const faqData = [
 
 const serviceItems = [
   { name: 'Захист прав військовослужбовців', icon: ShieldCheck, path: '/military-lawyer', color: 'from-blue-600 to-indigo-600' },
-  { name: 'Житлове право', icon: Home, path: '/housing-law', color: 'from-emerald-500 to-teal-600' },
   { name: 'Адміністративні правопорушення', icon: Scale, path: '/administrative-offences', color: 'from-violet-500 to-purple-600' },
 ];
 
@@ -1085,7 +1081,6 @@ const AppLayout = () => {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/military-lawyer" element={<MilitaryLawyer />} />
-            <Route path="/housing-law" element={<HousingLaw />} />
             <Route path="/administrative-offences" element={<AdministrativeOffences />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

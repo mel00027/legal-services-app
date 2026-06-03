@@ -6,7 +6,6 @@ const { MONOBANK_PAYMENT_LINK } = require('../config');
 
 const mainMenu = () => Markup.inlineKeyboard([
   [Markup.button.callback('🛡 Військове право', 'category_military')],
-  [Markup.button.callback('🏠 Житлове право', 'category_housing')],
   [Markup.button.callback('⚖️ Адмін. правопорушення', 'category_admin_offenses')],
   [Markup.button.callback('❓ Типові запитання (FAQ)', 'show_faq')]
 ]);
