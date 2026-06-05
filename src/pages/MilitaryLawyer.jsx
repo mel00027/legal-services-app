@@ -209,7 +209,7 @@ export const MilitaryLawyer = () => {
           <motion.h2 variants={fadeUp} style={{ willChange: 'transform, opacity' }}
             className="text-xl md:text-5xl font-black mb-3 md:mb-6 text-white tracking-tight"
           >
-            {activeFooterCta.heading}<br className="hidden md:block"/> в одному кліку
+            {activeFooterCta.heading}
           </motion.h2>
           <motion.p variants={fadeUpSoft} style={{ willChange: 'transform, opacity' }}
             className="text-sm md:text-xl text-white/50 mb-7 md:mb-10 max-w-2xl mx-auto leading-relaxed"
