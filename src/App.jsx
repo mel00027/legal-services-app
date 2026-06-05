@@ -1,8 +1,8 @@
 import React, { useState, useEffect, memo, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  MessageCircle, ShieldCheck, Home,
-  Grid, Search, ChevronRight,
+  MessageCircle, MessageSquareText, ShieldCheck, Home, House,
+  Search, HelpCircle, ChevronRight,
   Zap, CheckCircle2, Scale, ChevronUp,
   Star, ArrowRight, Award, Shield
 } from 'lucide-react';
@@ -12,6 +12,7 @@ import {
   FAQ_QUERY, REVIEWS_QUERY,
   HOME_PAGE_QUERY, SITE_CONFIG_QUERY, NAVIGATION_QUERY,
 } from './sanity/queries.js';
+import { BOT_LINK } from './shared.js';
 
 /* ======================== MOTION PRESETS ======================== */
 
@@ -128,8 +129,6 @@ const faqSchema = {
     acceptedAnswer: { '@type': 'Answer', text: item.answer },
   })),
 };
-
-const BOT_LINK = 'https://t.me/legal_click_bot?start=hello';
 
 /* ======================== COMPONENTS ======================== */
 
@@ -343,6 +342,12 @@ const MobileBottomBar = ({ activeTab, setActiveTab }) => {
   const navigate = useNavigate();
   const isHome = location.pathname === '/';
 
+  const tabs = [
+    { id: 'home', label: 'Головна', Icon: House },
+    { id: 'services', label: 'Послуги', Icon: Scale },
+    { id: 'faq', label: 'FAQ', Icon: HelpCircle },
+  ];
+
   const goTo = (id) => {
     const scroll = () => {
       if (id === 'home') window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -356,32 +361,68 @@ const MobileBottomBar = ({ activeTab, setActiveTab }) => {
   const active = (id) => activeTab === id && isHome;
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 w-full bg-[#020817]/90 backdrop-blur-md border-t border-white/[0.07] px-2 pt-1.5 pb-1.5 flex justify-around items-center z-50 safe-bottom">
-      {[
-        { id: 'home', label: 'Головна', Icon: Home },
-        { id: 'services', label: 'Послуги', Icon: Grid },
-        { id: 'faq', label: 'FAQ', Icon: Search },
-      ].map(({ id, label, Icon }) => (
-        <button
-          key={id}
-          onClick={() => goTo(id)}
-          className={`flex flex-col items-center gap-0.5 py-1.5 px-4 rounded-xl transition-all ${
-            active(id) ? 'text-[#60A5FA] bg-blue-500/15' : 'text-white/40'
-          }`}
-        >
-          <Icon className="w-5 h-5" strokeWidth={active(id) ? 2.5 : 2} />
-          <span className={`text-[10px] ${active(id) ? 'font-bold' : 'font-medium'}`}>{label}</span>
-        </button>
-      ))}
+    <div
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 pointer-events-none"
+      style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 10px)' }}
+    >
+      {/* Soft fade behind the floating bar so content doesn't bleed under sharply */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-28 pointer-events-none"
+        style={{ background: 'linear-gradient(to top, rgba(2,8,23,0.85) 30%, rgba(2,8,23,0) 100%)' }}
+      />
 
-      <a
-        href={BOT_LINK}
-        className="flex flex-col items-center gap-0.5 py-1.5 px-4 rounded-xl bg-gradient-to-r from-[#2563EB] to-[#7C3AED] text-white active:scale-95 transition-transform"
+      <nav className="relative pointer-events-auto mx-auto w-[calc(100%-48px)] max-w-sm p-1.5 flex items-stretch gap-1 rounded-[26px] border border-white/[0.08] shadow-[0_12px_40px_rgba(0,0,0,0.55),0_2px_8px_rgba(0,0,0,0.3)]"
+        style={{
+          background: 'linear-gradient(180deg, rgba(15,23,42,0.92) 0%, rgba(2,8,23,0.92) 100%)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        }}
       >
-        <MessageCircle className="w-5 h-5" strokeWidth={2} />
-        <span className="text-[10px] font-bold">Чат</span>
-      </a>
-    </nav>
+        {tabs.map(({ id, label, Icon }) => {
+          const isActive = active(id);
+          return (
+            <button
+              key={id}
+              onClick={() => goTo(id)}
+              aria-label={label}
+              aria-current={isActive ? 'page' : undefined}
+              className="relative flex-1 flex flex-col items-center justify-center gap-0.5 py-2 rounded-2xl active:scale-[0.94] transition-transform"
+            >
+              {isActive && (
+                <motion.div
+                  layoutId="bottomBarPill"
+                  className="absolute inset-0 rounded-2xl bg-gradient-to-b from-blue-500/25 to-violet-500/15 border border-blue-400/25 shadow-[0_0_18px_rgba(59,130,246,0.35)_inset]"
+                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                />
+              )}
+              <div className="relative flex flex-col items-center gap-1">
+                <Icon
+                  className={`w-[22px] h-[22px] transition-colors ${isActive ? 'text-[#93C5FD]' : 'text-white/55'}`}
+                  strokeWidth={isActive ? 2.2 : 1.8}
+                  aria-hidden="true"
+                />
+                <span className={`text-[10px] leading-none tracking-wide transition-colors ${isActive ? 'font-semibold text-white' : 'font-medium text-white/55'}`}>
+                  {label}
+                </span>
+              </div>
+            </button>
+          );
+        })}
+
+        {/* Primary CTA — sits inside the panel, visually distinct via gradient */}
+        <motion.a
+          href={BOT_LINK}
+          aria-label="Чат з юристом"
+          className="relative shrink-0 flex items-center justify-center w-12 rounded-2xl bg-gradient-to-br from-[#2563EB] to-[#7C3AED] text-white shadow-[0_4px_16px_rgba(37,99,235,0.45),0_0_0_1px_rgba(255,255,255,0.08)_inset]"
+          whileTap={{ scale: 0.92 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 22 }}
+        >
+          <MessageSquareText className="w-[22px] h-[22px]" strokeWidth={2.2} aria-hidden="true" />
+          <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#1E40AF] shadow-[0_0_8px_rgba(52,211,153,0.7)]" />
+        </motion.a>
+      </nav>
+    </div>
   );
 };
 
@@ -744,51 +785,54 @@ const HomePage = () => {
             </motion.h2>
         </div>
 
-        {/* Mobile steps */}
-        <div className="md:hidden space-y-8">
-          {[
-            { n: '1', title: 'Обираєте послугу', desc: 'Натисніть потрібний напрямок у боті. Не впевнені? Тисніть «Інше», і ми зорієнтуємо!', accent: false },
+        {(() => {
+          const steps = [
+            { n: '1', title: 'Обираєте послугу', desc: 'Натисніть потрібний напрямок у боті.', accent: false },
             { n: '2', title: 'Пишете в чат', desc: 'Опишіть ситуацію та додайте фото. Юрист вже вивчає документи і будує стратегію.', accent: false },
             { n: '3', title: 'Отримуєте готовий документ', desc: 'Юрист надсилає документ і інструкцію — куди, як і кому подати. Підписуєте та відправляєте від свого імені.', accent: true },
-          ].map(({ n, title, desc, accent }) => (
-            <motion.div key={n} variants={cardRise} style={{ willChange: 'transform, opacity' }} className="text-center">
-              <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-base mx-auto mb-3 ${
-                  accent
-                    ? 'bg-gradient-to-br from-[#2563EB] to-[#7C3AED] border-transparent text-white shadow-[0_0_20px_rgba(37,99,235,0.5)]'
-                    : 'bg-[#0D1B2E] border-2 border-white/15 text-white/80'
-                }`}
-              >
-                {n}
+          ];
+          return (
+            <>
+              {/* Mobile steps */}
+              <div className="md:hidden space-y-8">
+                {steps.map(({ n, title, desc, accent }) => (
+                  <motion.div key={n} variants={cardRise} style={{ willChange: 'transform, opacity' }} className="text-center">
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-base mx-auto mb-3 ${
+                        accent
+                          ? 'bg-gradient-to-br from-[#2563EB] to-[#7C3AED] border-transparent text-white shadow-[0_0_20px_rgba(37,99,235,0.5)]'
+                          : 'bg-[#0D1B2E] border-2 border-white/15 text-white/80'
+                      }`}
+                    >
+                      {n}
+                    </div>
+                    <h3 className="font-black text-lg mb-1.5">{title}</h3>
+                    <p className="text-white/50 text-sm leading-relaxed max-w-xs mx-auto">{desc}</p>
+                  </motion.div>
+                ))}
               </div>
-              <h3 className="font-black text-lg mb-1.5">{title}</h3>
-              <p className="text-white/50 text-sm leading-relaxed max-w-xs mx-auto">{desc}</p>
-            </motion.div>
-          ))}
-        </div>
 
-        {/* Desktop steps */}
-        <div className="hidden md:grid grid-cols-3 gap-8 lg:gap-12 relative">
-          {[
-            { n: '1', title: 'Обираєте послугу', desc: 'Просто натисніть потрібний напрямок у боті.', accent: false },
-            { n: '2', title: 'Пишете в чат', desc: 'Опишіть ситуацію та додайте фото документів. Юрист вже будує правову стратегію.', accent: false },
-            { n: '3', title: 'Отримуєте готовий документ', desc: 'Юрист надсилає вам готовий документ і чітку інструкцію куди, як і кому його подати. Ви підписуєте та відправляєте від свого імені.', accent: true },
-          ].map(({ n, title, desc, accent }) => (
-            <motion.div key={n} variants={cardRise} style={{ willChange: 'transform, opacity' }} className="relative z-10 text-center">
-              <div
-                className={`w-14 h-14 rounded-full flex items-center justify-center font-black text-xl mx-auto mb-8 ${
-                  accent
-                    ? 'bg-gradient-to-br from-[#2563EB] to-[#7C3AED] shadow-[0_0_40px_rgba(37,99,235,0.5)] text-white'
-                    : 'bg-white/10 border border-white/15 text-white/80'
-                }`}
-              >
-                {n}
+              {/* Desktop steps */}
+              <div className="hidden md:grid grid-cols-3 gap-8 lg:gap-12 relative">
+                {steps.map(({ n, title, desc, accent }) => (
+                  <motion.div key={n} variants={cardRise} style={{ willChange: 'transform, opacity' }} className="relative z-10 text-center">
+                    <div
+                      className={`w-14 h-14 rounded-full flex items-center justify-center font-black text-xl mx-auto mb-8 ${
+                        accent
+                          ? 'bg-gradient-to-br from-[#2563EB] to-[#7C3AED] shadow-[0_0_40px_rgba(37,99,235,0.5)] text-white'
+                          : 'bg-white/10 border border-white/15 text-white/80'
+                      }`}
+                    >
+                      {n}
+                    </div>
+                    <h3 className="font-black text-2xl mb-4">{title}</h3>
+                    <p className="text-white/50 text-base leading-relaxed max-w-xs mx-auto">{desc}</p>
+                  </motion.div>
+                ))}
               </div>
-              <h3 className="font-black text-2xl mb-4">{title}</h3>
-              <p className="text-white/50 text-base leading-relaxed max-w-xs mx-auto">{desc}</p>
-            </motion.div>
-          ))}
-        </div>
+            </>
+          );
+        })()}
       </motion.div>
     </section>
 
@@ -1057,7 +1101,7 @@ const AppLayout = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen text-white font-sans overflow-x-hidden pt-[56px] md:pt-[72px] pb-[72px] md:pb-0">
+    <div className="min-h-screen text-white font-sans overflow-x-hidden pt-[56px] md:pt-[72px] pb-[88px] md:pb-0">
       <IntroOverlay />
       <NavigationHeader />
       <main className="w-full">
