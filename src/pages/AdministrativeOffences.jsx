@@ -9,6 +9,7 @@ import { SERVICE_PAGE_QUERY, SITE_CONFIG_QUERY } from '../sanity/queries.js';
 import { getIcon } from '../sanity/iconMap.js';
 
 const DEFAULT_BOT_LINK = "https://t.me/legal_click_bot?start=hello";
+const getBotLink = (param = 'hello') => `https://t.me/legal_click_bot?start=${param}`;
 
 const EASE = [0.22, 1, 0.36, 1];
 const VIEWPORT = { once: true, margin: '-80px' };
@@ -31,10 +32,10 @@ const cardRise = {
 };
 
 const services = [
-  { title: "Справи у сфері дорожнього руху", desc: "Штрафи ПДР, позбавлення прав, оскарження постанов поліції, ДТП та експертизи.", icon: Car, color: "from-violet-500 to-purple-600" },
-  { title: "Оскарження постанов", desc: "Скасування постанов про адміністративні правопорушення у суді чи вищому органі.", icon: FileX, color: "from-fuchsia-500 to-pink-600" },
-  { title: "Спори з органами влади", desc: "Спори з приводу рішень, дій чи бездіяльності суб'єктів владних повноважень у справах про притягнення до адміністративної відповідальності.", icon: Building2, color: "from-indigo-500 to-violet-600" },
-  { title: "Військові адміністративні правопорушення", desc: "Ст. 172-10 – 172-20 КУпАП: непокора командиру, СЗЧ, пошкодження військового майна, недбале ставлення до служби, вживання алкоголю чи наркотиків.", icon: ShieldAlert, color: "from-blue-500 to-indigo-600" },
+  { title: "Справи у сфері дорожнього руху", desc: "Штрафи ПДР, позбавлення прав, оскарження постанов поліції, ДТП та експертизи.", icon: Car, color: "from-violet-500 to-purple-600", deepLink: 'pdr' },
+  { title: "Оскарження постанов", desc: "Скасування постанов про адміністративні правопорушення у суді чи вищому органі.", icon: FileX, color: "from-fuchsia-500 to-pink-600", deepLink: 'oskarjennya' },
+  { title: "Спори з органами влади", desc: "Спори з приводу рішень, дій чи бездіяльності суб'єктів владних повноважень у справах про притягнення до адміністративної відповідальності.", icon: Building2, color: "from-indigo-500 to-violet-600", deepLink: 'spory' },
+  { title: "Військові адміністративні правопорушення", desc: "Ст. 172-10 – 172-20 КУпАП: непокора командиру, СЗЧ, пошкодження військового майна, недбале ставлення до служби, вживання алкоголю чи наркотиків.", icon: ShieldAlert, color: "from-blue-500 to-indigo-600", deepLink: 'viysk_admin' },
 ];
 
 const stats = [
@@ -188,19 +189,26 @@ export const AdministrativeOffences = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
             {activeServices.map((service, index) => {
               const Icon = service.icon || getIcon(service.iconName);
+              const linkUrl = service.deepLink ? getBotLink(service.deepLink) : DEFAULT_BOT_LINK;
               return (
-                <motion.div
+                <motion.a
                   key={index}
+                  href={linkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   variants={cardRise}
                   style={{ willChange: 'transform, opacity' }}
-                  className="bg-white/[0.04] backdrop-blur-sm rounded-2xl md:rounded-3xl p-6 md:p-8 border border-white/[0.08] hover:bg-white/[0.07] md:hover:-translate-y-2 transition-all duration-300 group"
+                  className="block bg-white/[0.04] backdrop-blur-sm rounded-2xl md:rounded-3xl p-6 md:p-8 border border-white/[0.08] hover:bg-white/[0.07] md:hover:-translate-y-2 transition-all duration-300 group cursor-pointer"
                 >
                   <div className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                     <Icon className="w-6 h-6 md:w-7 md:h-7 text-white" strokeWidth={2} />
                   </div>
                   <h3 className="text-base md:text-xl font-black text-white mb-3">{service.title}</h3>
                   <p className="text-white/55 text-sm md:text-base leading-relaxed">{service.desc}</p>
-                </motion.div>
+                  <div className="mt-4 flex items-center gap-2 text-violet-400 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    Отримати допомогу <ArrowRight className="w-4 h-4" />
+                  </div>
+                </motion.a>
               );
             })}
           </div>

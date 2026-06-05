@@ -10,6 +10,7 @@ import { SERVICE_PAGE_QUERY, SITE_CONFIG_QUERY } from '../sanity/queries.js';
 import { getIcon } from '../sanity/iconMap.js';
 
 const DEFAULT_BOT_LINK = "https://t.me/legal_click_bot?start=hello";
+const getBotLink = (param = 'hello') => `https://t.me/legal_click_bot?start=${param}`;
 
 const EASE = [0.22, 1, 0.36, 1];
 const VIEWPORT = { once: true, margin: '-80px' };
@@ -32,13 +33,13 @@ const cardRise = {
 };
 
 const services = [
-  { title: "Оскарження рішень ВЛК/МСЕК", desc: "Перегляд висновків за станом здоров'я та направлення на комісію.", icon: ShieldAlert, color: "from-blue-500 to-indigo-600" },
-  { title: "Мобілізація та відстрочка", desc: "Оскарження призову та супровід при отриманні законної відстрочки.", icon: UserCheck, color: "from-emerald-500 to-teal-600" },
-  { title: "Звільнення зі служби", desc: "Юридичний супровід звільнення за наявності законних підстав.", icon: FileText, color: "from-violet-500 to-purple-600" },
-  { title: "Переведення та рапорти", desc: "Оскарження відмов у переведенні до іншої частини.", icon: MoveRight, color: "from-orange-500 to-red-500" },
-  { title: "Виплати грошового забезпечення", desc: "Стягнення недоплачених коштів, «бойових» та виплати 1 млн грн.", icon: Landmark, color: "from-amber-500 to-yellow-500" },
-  { title: "Для звільнених військовослужбовців", desc: "Стягнення недоотриманого грошового забезпечення (від 100 тис до 400 тис грн), якщо ви проходили службу у 2020-2025 роках та звільнились.", icon: HandHeart, color: "from-teal-500 to-cyan-500" },
-  { title: "Сімейні справи", desc: "Виплати загиблим. Встановлення факту проживання однією сім'єю.", icon: Users, color: "from-pink-500 to-rose-600" },
+  { title: "Оскарження рішень ВЛК/МСЕК", desc: "Перегляд висновків за станом здоров'я та направлення на комісію.", icon: ShieldAlert, color: "from-blue-500 to-indigo-600", deepLink: 'vlk' },
+  { title: "Мобілізація та відстрочка", desc: "Оскарження призову та супровід при отриманні законної відстрочки.", icon: UserCheck, color: "from-emerald-500 to-teal-600", deepLink: 'mobilizatsiya' },
+  { title: "Звільнення зі служби", desc: "Юридичний супровід звільнення за наявності законних підстав.", icon: FileText, color: "from-violet-500 to-purple-600", deepLink: 'zvilnennya' },
+  { title: "Переведення та рапорти", desc: "Оскарження відмов у переведенні до іншої частини.", icon: MoveRight, color: "from-orange-500 to-red-500", deepLink: 'perevedennya' },
+  { title: "Виплати грошового забезпечення", desc: "Стягнення недоплачених коштів, «бойових» та виплати 1 млн грн.", icon: Landmark, color: "from-amber-500 to-yellow-500", deepLink: 'vyplaty' },
+  { title: "Для звільнених військовослужбовців", desc: "Стягнення недоотриманого грошового забезпечення (від 100 тис до 400 тис грн), якщо ви проходили службу у 2020-2025 роках та звільнились.", icon: HandHeart, color: "from-teal-500 to-cyan-500", deepLink: 'zvilneni' },
+  { title: "Сімейні справи", desc: "Виплати загиблим. Встановлення факту проживання однією сім'єю.", icon: Users, color: "from-pink-500 to-rose-600", deepLink: 'simeyni' },
 ];
 
 const stats = [
@@ -173,19 +174,26 @@ export const MilitaryLawyer = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {activeServices.map((service, index) => {
               const Icon = service.icon || getIcon(service.iconName);
+              const linkUrl = service.deepLink ? getBotLink(service.deepLink) : BOT_LINK;
               return (
-                <motion.div
+                <motion.a
                   key={index}
+                  href={linkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   variants={cardRise}
                   style={{ willChange: 'transform, opacity' }}
-                  className="bg-white/[0.04] backdrop-blur-sm rounded-2xl md:rounded-3xl p-6 md:p-8 border border-white/[0.08] hover:bg-white/[0.07] md:hover:-translate-y-2 transition-all duration-300 group"
+                  className="block bg-white/[0.04] backdrop-blur-sm rounded-2xl md:rounded-3xl p-6 md:p-8 border border-white/[0.08] hover:bg-white/[0.07] md:hover:-translate-y-2 transition-all duration-300 group cursor-pointer"
                 >
                   <div className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                     <Icon className="w-6 h-6 md:w-7 md:h-7 text-white" strokeWidth={2} />
                   </div>
                   <h3 className="text-base md:text-xl font-black text-white mb-3">{service.title}</h3>
                   <p className="text-white/55 text-sm md:text-base leading-relaxed">{service.desc}</p>
-                </motion.div>
+                  <div className="mt-4 flex items-center gap-2 text-[#60A5FA] text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    Отримати допомогу <ArrowRight className="w-4 h-4" />
+                  </div>
+                </motion.a>
               );
             })}
           </div>
