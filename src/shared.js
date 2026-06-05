@@ -1,5 +1,4 @@
 export const BOT_LINK = 'https://t.me/legal_click_bot?start=hello';
-export const getBotLink = (startParam = 'hello') => `https://t.me/legal_click_bot?start=${startParam}`;
 
 export const EASE = [0.22, 1, 0.36, 1];
 

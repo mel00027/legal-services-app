@@ -9,7 +9,7 @@ const {
   MEDIA_GROUP_CACHE_MS,
 } = require('../config');
 const { isRateLimited } = require('../rateLimit');
-const { SUBCATEGORIES, CAT_ID_BY_NAME, DEEP_LINK_MAP } = require('../content/categories');
+const { SUBCATEGORIES, CAT_ID_BY_NAME } = require('../content/categories');
 const { SERVICE_TYPE_LABELS } = require('../content/examples');
 const { getFaqText } = require('../content/faq');
 const { buildStartWelcome, MENU_BODY, getDescriptionPromptText } = require('../content/prompts');
@@ -29,34 +29,8 @@ const processedMediaGroups = new Set();
 
 function register(bot) {
   bot.start(async (ctx) => {
-    const startPayload = ctx.startPayload; // e.g. "vlk", "vyplaty"
     await db.deleteSession(ctx.from.id);
     await db.saveTopic(ctx.from.id, null);
-
-    // Deep link: route directly to subcategory if payload matches
-    const deepLink = startPayload && DEEP_LINK_MAP[startPayload.toLowerCase()];
-    if (deepLink) {
-      const catData = SUBCATEGORIES[deepLink.categoryId];
-      if (catData) {
-        const fullCategory = `${catData.name} -> ${deepLink.subcategoryId}`;
-        await db.saveSession(ctx.from.id, {
-          chat_id: ctx.chat.id,
-          status: 'awaiting_description',
-          category: fullCategory,
-        });
-        try {
-          await ctx.reply(getDescriptionPromptText(fullCategory), {
-            parse_mode: 'Markdown',
-            reply_markup: { inline_keyboard: [[{ text: '⬅️ Назад у меню', callback_data: 'back_to_menu' }]] },
-          });
-        } catch (e) {
-          console.error('/start deep link failed', e.message);
-        }
-        return;
-      }
-    }
-
-    // Default: show welcome menu
     try {
       await ctx.reply(buildStartWelcome(ctx.from.first_name), {
         parse_mode: 'Markdown',
